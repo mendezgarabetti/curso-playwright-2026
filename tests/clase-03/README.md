@@ -11,7 +11,6 @@
 | `04-debug-tools.spec.js` | Herramientas: pause, console.log, screenshots | Demo |
 | `05-buenas-practicas.spec.js` | Patrones y anti-patrones de debugging | Demo |
 | `taller-debug-ARREGLAR.spec.js` | 🔴 10 tests rotos para arreglar | Práctica |
-| `_SOLUCIONES_TALLER.spec.js` | Soluciones del taller (no compartir) | Instructor |
 
 ## 🎯 Objetivos de la clase
 

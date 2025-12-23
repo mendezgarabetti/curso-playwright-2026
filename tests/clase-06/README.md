@@ -204,10 +204,3 @@ const BASE_URL = ENVIRONMENTS[ENV];
 | 5 | API & Mocking | API testing, intercepción de red |
 | 6 | CI/CD | Multi-browser, entornos, GitHub Actions |
 
-### Próximos pasos recomendados
-
-1. **Implementar en proyecto real** - Aplicar lo aprendido
-2. **Visual regression testing** - Comparación de screenshots
-3. **Performance testing** - Métricas de rendimiento
-4. **Accessibility testing** - Validación de accesibilidad
-5. **Component testing** - Tests de componentes aislados
