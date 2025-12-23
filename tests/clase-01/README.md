@@ -120,23 +120,7 @@ test('descripción del test', async ({ page }) => {
 ### Ejercicio 4: BONUS
 - Completar flujo de checkout completo
 
-## ⏰ Distribución de tiempo sugerida
 
-| Bloque | Duración |
-|--------|----------|
-| Bienvenida + Pirámide de Testing | 20 min |
-| Instalación de Playwright | 25 min |
-| Demo: Estructura del proyecto | 15 min |
-| *Break* | 10 min |
-| Jerarquía de Selectores | 25 min |
-| Demo: Primer test | 20 min |
-| *Break* | 10 min |
-| Aserciones básicas | 20 min |
-| Demo: Flujo E2E | 15 min |
-| Tests frágiles (Wikipedia) | 10 min |
-| **Ejercicio práctico** | 40 min |
-| Cierre y Q&A | 10 min |
-| **Total** | **4 horas** |
 
 ## 🔧 Instalación de Playwright
 

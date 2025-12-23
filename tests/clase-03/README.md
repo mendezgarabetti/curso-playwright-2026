@@ -104,25 +104,7 @@ El archivo `taller-debug-ARREGLAR.spec.js` contiene **10 tests rotos** con error
    - Corregir el error
    - Verificar que pasa en verde
 
-3. Tiempo estimado: 30-45 minutos
 
-## ⏰ Distribución de tiempo sugerida
-
-| Bloque | Duración |
-|--------|----------|
-| Repaso Día 2 + Preview | 10 min |
-| Trace Viewer | 30 min |
-| Demo: análisis de test fallido | 15 min |
-| *Break* | 10 min |
-| Storage State concepto | 25 min |
-| Configuración auth.setup | 20 min |
-| Demo: tests con sesión | 15 min |
-| *Break* | 10 min |
-| Herramientas de debug | 25 min |
-| Buenas prácticas | 15 min |
-| **Taller de debugging** | 45 min |
-| Cierre | 10 min |
-| **Total** | **4 horas** |
 
 ## 🔗 Configuración de Storage State
 

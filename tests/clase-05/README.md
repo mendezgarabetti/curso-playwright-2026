@@ -127,24 +127,6 @@ const resourceType = route.request().resourceType();
 - Simular errores del servidor
 - Modificar respuestas en vuelo
 
-## ⏰ Distribución de tiempo sugerida
-
-| Bloque | Duración |
-|--------|----------|
-| Repaso Día 4 + Preview | 10 min |
-| API Testing: Conceptos | 20 min |
-| Demo: GET, POST, PUT, DELETE | 25 min |
-| API Context y headers | 15 min |
-| *Break* | 10 min |
-| Network Interception | 20 min |
-| Mocking de Responses | 25 min |
-| Demo: Simular errores | 15 min |
-| *Break* | 10 min |
-| Pruebas Híbridas | 25 min |
-| **Ejercicios** | 40 min |
-| Cierre | 5 min |
-| **Total** | **4 horas** |
-
 ## 🔧 Configuración recomendada
 
 Para API testing con baseURL en `playwright.config.js`:
