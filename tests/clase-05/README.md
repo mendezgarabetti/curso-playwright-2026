@@ -11,7 +11,6 @@
 | `05-mocking-avanzado.spec.js` | Demo | Casos de uso reales |
 | `ejercicio-01-api-testing.spec.js` | Práctica | Ejercicios de API Testing |
 | `ejercicio-02-mocking.spec.js` | Práctica | Ejercicios de Network Mocking |
-| `_SOLUCIONES_EJERCICIOS.spec.js` | Instructor | Soluciones (no compartir) |
 
 ## 🎯 Objetivos de la clase
 

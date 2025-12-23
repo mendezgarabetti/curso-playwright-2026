@@ -10,7 +10,7 @@
 | `04-flujo-e2e.spec.js` | Demo | Flujo de compra completo |
 | `05-tests-fragiles.spec.js` | Demo | Wikipedia vs SauceDemo (fragilidad) |
 | `ejercicio-primeros-pasos.spec.js` | **Práctica** | Ejercicios para completar |
-| `_SOLUCIONES_EJERCICIO.spec.js` | Instructor | Soluciones (no compartir) |
+
 
 ## 🎯 Objetivos de la clase
 
