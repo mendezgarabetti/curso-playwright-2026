@@ -2,7 +2,7 @@
 
 ## 🎯 Objetivo
 
-Este documento detalla todo lo que necesitás tener instalado y configurado **ANTES** de comenzar con los contenidos siguientes.
+Este documento detalla todo lo que necesitás tener instalado y configurado **ANTES** de comenzar la Clase 1. Seguí estos pasos con anticipación para aprovechar al máximo el tiempo de capacitación.
 
 ---
 
@@ -113,13 +113,9 @@ O simplemente abrí VS Code desde el menú de aplicaciones.
 
 ---
 
-## 3. Extensiones de VS Code (Recomendado)
+## 3. Extensión de VS Code (Obligatoria)
 
-Estas extensiones mejorarán tu experiencia durante el curso:
-
-### Obligatorias
-
-#### Playwright Test for VS Code
+### Playwright Test for VS Code
 - **ID:** `ms-playwright.playwright`
 - **Instalación:** 
   1. Abrí VS Code
@@ -128,34 +124,15 @@ Estas extensiones mejorarán tu experiencia durante el curso:
   4. Click en "Install"
 
 **¿Qué hace?**
-- Ejecutar tests desde el editor
-- Ver resultados inline
-- Debugging integrado
-- Generador de código (Pick Locator)
+- Ejecutar tests desde el editor (sin usar terminal)
+- Ver resultados inline en el código
+- Debugging integrado paso a paso
+- **Pick Locator**: seleccionar elementos visualmente
+- Explorador de tests con filtros
 
-### Recomendadas
-
-#### ESLint
-- **ID:** `dbaeumer.vscode-eslint`
-- Detecta errores de JavaScript en tiempo real
-
-#### Prettier
-- **ID:** `esbenp.prettier-vscode`
-- Formatea el código automáticamente
-
-#### JavaScript (ES6) code snippets
-- **ID:** `xabikos.JavaScriptSnippets`
-- Atajos para escribir código más rápido
-
-#### Material Icon Theme
-- **ID:** `PKief.material-icon-theme`
-- Íconos bonitos para los archivos (opcional, estético)
-
-### Instalación rápida por terminal
+### Instalación por terminal
 ```bash
 code --install-extension ms-playwright.playwright
-code --install-extension dbaeumer.vscode-eslint
-code --install-extension esbenp.prettier-vscode
 ```
 
 ---
@@ -318,7 +295,14 @@ En la Clase 1, dentro de esta carpeta ejecutaremos `npm init playwright@latest`.
 
 ---
 
+## 📞 Soporte Pre-Curso
+
+Si tenés problemas con la instalación, contactá al instructor ANTES del Día 1 para resolverlo y no perder tiempo de clase.
+
+---
+
 ## ✅ ¡Listo!
 
+Si completaste todos los pasos y las verificaciones dan OK, estás preparado para la Clase 1.
 
-
+**Nos vemos en el curso! 🚀**

@@ -125,19 +125,16 @@ if (!vscodeResult.success) {
 }
 
 // ----------------------------------------------------------------------------
-// 4. Extensiones de VS Code
+// 4. Extensión de VS Code (Playwright)
 // ----------------------------------------------------------------------------
 if (vscodeResult.success) {
-  console.log(`\n${colors.bold}4. Extensiones de VS Code${colors.reset}`);
+  console.log(`\n${colors.bold}4. Extensión Playwright para VS Code${colors.reset}`);
   
   const playwrightExt = checkVSCodeExtension('ms-playwright.playwright', 'Playwright Test');
   if (!playwrightExt) {
     warnings.push('Instalar extensión Playwright Test para VS Code');
     console.log(`   ${colors.yellow}→ Instalar: code --install-extension ms-playwright.playwright${colors.reset}`);
   }
-  
-  checkVSCodeExtension('dbaeumer.vscode-eslint', 'ESLint');
-  checkVSCodeExtension('esbenp.prettier-vscode', 'Prettier');
 }
 
 // ----------------------------------------------------------------------------
