@@ -167,8 +167,6 @@ cd test-entorno
 npm init -y
 npm install @playwright/test
 
-# Si esto funciona, estás listo!
-echo "✅ Entorno configurado correctamente"
 
 # Limpiar
 cd ..
@@ -176,29 +174,3 @@ rm -rf test-entorno
 ```
 
 ---
-
-## 🆘 Solución de Problemas Comunes
-
-### "node no se reconoce como comando"
-- **Windows:** Reiniciá la terminal o la PC
-- **Mac/Linux:** Verificá que Node.js esté en el PATH
-
-### "Permission denied" en npm
-```bash
-# Linux/Mac: No usar sudo con npm
-# En su lugar, cambiar el directorio de npm:
-mkdir ~/.npm-global
-npm config set prefix '~/.npm-global'
-echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
-source ~/.bashrc
-```
-
-### VS Code no abre desde terminal
-- **Windows:** Reinstalar VS Code marcando "Add to PATH"
-- **Mac:** Abrir VS Code → Cmd+Shift+P → "Shell Command: Install 'code' command in PATH"
-
-### Error de certificados SSL
-```bash
-# Configurar npm para usar registro HTTP
-npm config set registry http://registry.npmjs.org/
-```

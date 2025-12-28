@@ -12,9 +12,11 @@ Antes de empezar, asegúrate de tener instalado en tu computadora:
 
 ---
 
-## 🛠️ Guía de Instalación (Paso a paso)
+## 🛠️ Guía de Instalación 
 
-Tus alumnos no necesitan cuenta en GitHub. Solo deben seguir estos 4 pasos en su terminal para tener el entorno listo:
+C
+
+Sin necesidad de contar con cuenta en GitHub. Solo deben seguir estos 4 pasos en su terminal para tener el entorno listo:
 
 ### 1. Clonar el repositorio
 
@@ -76,23 +78,6 @@ Para ver el reporte HTML al finalizar:
 
 ```bash
 npx playwright show-report
-```
-
----
-
-## 📤 Cómo subir cambios a GitHub
-
-Una vez que hayas modificado archivos, súbelos con los "3 Pasos Sagrados":
-
-```bash
-# 1. Preparar
-git add .
-
-# 2. Guardar versión
-git commit -m "Descripción de los cambios"
-
-# 3. Subir
-git push
 ```
 
 ---
