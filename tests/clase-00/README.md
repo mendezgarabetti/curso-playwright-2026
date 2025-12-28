@@ -295,14 +295,5 @@ En la Clase 1, dentro de esta carpeta ejecutaremos `npm init playwright@latest`.
 
 ---
 
-## 📞 Soporte Pre-Curso
-
-Si tenés problemas con la instalación, contactá al instructor ANTES del Día 1 para resolverlo y no perder tiempo de clase.
-
----
 
 ## ✅ ¡Listo!
-
-Si completaste todos los pasos y las verificaciones dan OK, estás preparado para la Clase 1.
-
-**Nos vemos en el curso! 🚀**
