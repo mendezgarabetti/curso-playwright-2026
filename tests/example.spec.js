@@ -1,9 +1,13 @@
 // @ts-check
+
+// Nota: Esto habilita la verificación de tipos de TypeScript aunque estemos escribiendo 
+// en JavaScript normal. Nos ayuda a que VS Code nos avise si cometemos errores
+
 import { test, expect } from '@playwright/test';
 
 test('has title', async ({ page }) => {
   await page.goto('https://playwright.dev/');
-
+  
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Playwright/);
 });

@@ -14,11 +14,11 @@ Antes de empezar, asegúrate de tener instalado en tu computadora:
 
 ## 🛠️ Guía de Instalación 
 
-C
+Para evitar conflictos con el proyecto creado localmente se recomienda evitar clonar el respositorio e ir descargando los ejercicios de a uno.
 
-Sin necesidad de contar con cuenta en GitHub. Solo deben seguir estos 4 pasos en su terminal para tener el entorno listo:
 
 ### 1. Clonar el repositorio
+Sin necesidad de contar con cuenta en GitHub. Solo deben seguir estos 4 pasos en su terminal para tener el entorno listo:
 
 Descarga el código fuente a tu computadora:
 
