@@ -10,9 +10,8 @@
 | `04-formularios.spec.js` | Interacción con inputs, dropdowns, teclas | Demo |
 | `05-elementos-dinamicos.spec.js` | Modales, hovers, iframes, checkboxes | Demo |
 | `06-happy-path-checkout.spec.js` | Flujo E2E completo con validaciones en cada paso | Demo |
-| `ejercicio-01-aserciones.spec.js` | Ejercicio para agregar aserciones | Práctica |
-| `ejercicio-02-checkout.spec.js` | Ejercicio para completar flujo de checkout | Práctica |
-
+| `ejercicio-01-aserciones.spec.js` | Ejercicio para agregar aserciones | **Práctica** |
+| `ejercicio-02-checkout.spec.js` | Ejercicio para completar flujo de checkout | **Práctica** |
 
 
 ## 🎯 Objetivos de la clase
@@ -44,31 +43,117 @@ npx playwright show-report
 ## 📚 Temas cubiertos
 
 ### Auto-Wait
-- Playwright espera automáticamente antes de cada acción
-- Verifica: visible, enabled, stable, receives events
-- Anti-patrón: `page.waitForTimeout()` (sleep)
+
+Playwright espera automáticamente antes de cada acción. No necesitas `sleep()` ni `waitFor()` en la mayoría de casos.
+
+```javascript
+// ❌ ANTI-PATRÓN: No hagas esto
+await page.waitForTimeout(3000);
+
+// ✅ CORRECTO: Playwright espera automáticamente
+await page.locator('[data-test="button"]').click();
+```
+
+**Qué verifica Playwright antes de actuar:**
+- ¿El elemento es visible?
+- ¿Está habilitado (enabled)?
+- ¿Está estable (no se está moviendo)?
+- ¿Es receptivo a eventos?
 
 ### Aserciones
-- `toBeVisible()` / `toBeHidden()`
-- `toHaveText()` / `toContainText()`
-- `toHaveValue()` / `toBeEmpty()`
-- `toHaveURL()` / `toHaveTitle()`
-- `toHaveCount()` / `toHaveAttribute()`
-- Negación con `.not`
-- Soft assertions con `expect.soft()`
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+// Página
+await expect(page).toHaveURL(/.*inventory.html/);
+await expect(page).toHaveTitle('Swag Labs');
+
+// Visibilidad
+await expect(locator).toBeVisible();
+await expect(locator).toBeHidden();
+await expect(locator).toBeEnabled();
+await expect(locator).toBeDisabled();
+
+// Texto
+await expect(locator).toHaveText('Products');
+await expect(locator).toContainText('Sauce');
+
+// Valores
+await expect(locator).toHaveValue('texto');
+await expect(locator).toBeEmpty();
+
+// Cantidad
+await expect(locator).toHaveCount(6);
+
+// Atributos
+await expect(locator).toHaveAttribute('type', 'text');
+await expect(locator).toHaveClass(/active/);
+
+// Negación
+await expect(locator).not.toBeVisible();
+```
+
+### Soft Assertions
+
+```javascript
+// Las soft assertions NO detienen el test si fallan
+// Útil para verificar múltiples condiciones
+
+await expect.soft(locator1).toBeVisible();
+await expect.soft(locator2).toHaveText('Texto');
+await expect.soft(locator3).toHaveCount(6);
+
+// Al final del test, Playwright reporta TODAS las que fallaron
+```
 
 ### Formularios
-- `fill()` vs `type()` vs `pressSequentially()`
-- `clear()` para limpiar inputs
-- `check()` / `uncheck()` para checkboxes
-- `selectOption()` para dropdowns
-- Teclas especiales: `Enter`, `Tab`, `Control+A`
+
+```javascript
+// Llenar inputs
+await page.locator('#input').fill('texto');        // Reemplaza todo
+await page.locator('#input').clear();              // Limpia
+await page.locator('#input').pressSequentially('texto', { delay: 50 }); // Tipeo lento
+
+// Checkboxes
+await page.locator('#checkbox').check();
+await page.locator('#checkbox').uncheck();
+await page.locator('#checkbox').setChecked(true);
+
+// Dropdowns
+await page.locator('select').selectOption('value');
+await page.locator('select').selectOption({ label: 'Texto visible' });
+
+// Teclas especiales
+await page.locator('#input').press('Enter');
+await page.locator('#input').press('Tab');
+await page.locator('#input').press('Control+a');
+await page.keyboard.press('Escape');
+```
 
 ### Elementos Dinámicos
-- Elementos que aparecen/desaparecen
-- Modales y diálogos JS (`page.on('dialog')`)
-- Hover con `hover()`
-- iFrames con `frameLocator()`
+
+```javascript
+// Esperar que aparezca
+await expect(page.locator('#elemento')).toBeVisible({ timeout: 10000 });
+
+// Diálogos de JavaScript
+page.on('dialog', async dialog => {
+  await dialog.accept();     // Aceptar
+  // await dialog.dismiss(); // Cancelar
+  // await dialog.accept('texto'); // Para prompts
+});
+
+// Hover
+await page.locator('.menu-item').hover();
+
+// iFrames
+const frame = page.frameLocator('#iframe');
+await frame.locator('#elemento-dentro').click();
+
+// Upload de archivos
+await page.locator('input[type="file"]').setInputFiles('archivo.txt');
+```
 
 ## ✏️ Ejercicios
 
@@ -84,7 +169,21 @@ npx playwright show-report
 - Agregar validaciones en cada paso
 - El test debe terminar con "Thank you for your order!"
 
+## ⚙️ Configuración ES Modules
 
+Este proyecto usa ES Modules. Para habilitarlo:
+
+```json
+// package.json
+{
+  "type": "module"
+}
+```
+
+```javascript
+// Sintaxis de importación
+import { test, expect } from '@playwright/test';
+```
 
 ## 🔗 Sitios usados en los ejemplos
 
@@ -96,4 +195,5 @@ npx playwright show-report
 **Día 3: Depuración y Eficiencia**
 - Trace Viewer en profundidad
 - Reutilización de sesiones (auth state)
-- Taller de debugging
+- Debugging con Inspector
+- Taller práctico de debugging

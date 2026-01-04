@@ -1,5 +1,5 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
  * CLASE 2: Interacción con Formularios
@@ -44,7 +44,7 @@ test.describe('Inputs de Texto', () => {
     await page.locator('[data-test="username"]').fill('standard_user');
   });
 
-  test('pressSequentially() - Simular tipeo lento (antes era type())', async ({ page }) => {
+  test('pressSequentially() - Simular tipeo lento', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     
     // pressSequentially simula escritura caracter por caracter
@@ -152,21 +152,42 @@ test.describe('Teclas Especiales y Combinaciones', () => {
     await expect(page).toHaveURL(/.*inventory.html/);
   });
 
-  test('Combinaciones de teclas (Ctrl+A, etc)', async ({ page }) => {
+  test('Control+A y Delete - Seleccionar todo y borrar', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     
-    // Llenar con texto
-    await page.locator('[data-test="username"]').fill('texto_a_seleccionar');
+    // Llenar un campo
+    await page.locator('[data-test="username"]').fill('texto_inicial');
     
-    // Seleccionar todo (Ctrl+A) y reemplazar
+    // Seleccionar todo con Control+A
     await page.locator('[data-test="username"]').press('Control+a');
-    await page.locator('[data-test="username"]').press('Backspace');
+    
+    // Borrar con Delete o Backspace
+    await page.locator('[data-test="username"]').press('Delete');
     
     // Verificar que está vacío
     await expect(page.locator('[data-test="username"]')).toBeEmpty();
     
-    // Ahora escribir el valor correcto
+    // Escribir nuevo texto
     await page.locator('[data-test="username"]').fill('standard_user');
+  });
+
+  test('Escape para cerrar elementos', async ({ page }) => {
+    await page.goto('https://www.saucedemo.com/');
+    await page.locator('[data-test="username"]').fill('standard_user');
+    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="login-button"]').click();
+    
+    // Abrir menú hamburguesa
+    await page.locator('#react-burger-menu-btn').click();
+    
+    // Verificar que el menú está abierto
+    await expect(page.locator('.bm-menu-wrap')).toBeVisible();
+    
+    // Cerrar con Escape (puede no funcionar en todos los sitios)
+    // await page.keyboard.press('Escape');
+    
+    // En SauceDemo, usamos el botón de cerrar
+    await page.locator('#react-burger-cross-btn').click();
   });
 
 });
@@ -183,55 +204,37 @@ test.describe('Dropdown (Select)', () => {
   test('selectOption() - Seleccionar por valor', async ({ page }) => {
     const dropdown = page.locator('[data-test="product-sort-container"]');
     
-    // Seleccionar por el atributo "value" de la opción
-    await dropdown.selectOption('lohi'); // Precio: bajo a alto
+    // Ordenar de Z a A
+    await dropdown.selectOption('za');
     
-    // Verificar que se aplicó el filtro
-    await expect(dropdown).toHaveValue('lohi');
+    // Verificar que el primer producto ahora es el último alfabéticamente
+    const primerProducto = page.locator('[data-test="inventory-item-name"]').first();
+    await expect(primerProducto).toContainText('Test.allTheThings');
+  });
+
+  test('selectOption() - Ordenar por precio', async ({ page }) => {
+    const dropdown = page.locator('[data-test="product-sort-container"]');
     
-    // El primer producto debería ser el más barato
+    // Ordenar de menor a mayor precio
+    await dropdown.selectOption('lohi');
+    
+    // Verificar que el primer producto es el más barato
     const primerPrecio = page.locator('[data-test="inventory-item-price"]').first();
     await expect(primerPrecio).toHaveText('$7.99');
   });
 
-  test('selectOption() - Seleccionar por texto visible', async ({ page }) => {
+  test('selectOption() - Múltiples formas de seleccionar', async ({ page }) => {
     const dropdown = page.locator('[data-test="product-sort-container"]');
     
-    // Seleccionar por el texto que ve el usuario
-    await dropdown.selectOption({ label: 'Price (high to low)' });
+    // Por valor del atributo value
+    await dropdown.selectOption('hilo');
     
-    // Verificar que se aplicó
-    await expect(dropdown).toHaveValue('hilo');
+    // También se puede por:
+    // - Label (texto visible): await dropdown.selectOption({ label: 'Price (high to low)' });
+    // - Index: await dropdown.selectOption({ index: 3 });
     
-    // El primer producto debería ser el más caro
     const primerPrecio = page.locator('[data-test="inventory-item-price"]').first();
     await expect(primerPrecio).toHaveText('$49.99');
-  });
-
-  test('selectOption() - Seleccionar por índice', async ({ page }) => {
-    const dropdown = page.locator('[data-test="product-sort-container"]');
-    
-    // Seleccionar la tercera opción (índice 2)
-    await dropdown.selectOption({ index: 2 });
-    
-    // Verificar (índice 2 es "Price low to high")
-    await expect(dropdown).toHaveValue('lohi');
-  });
-
-  test('Verificar todas las opciones disponibles', async ({ page }) => {
-    const dropdown = page.locator('[data-test="product-sort-container"]');
-    
-    // Obtener todas las opciones
-    const opciones = dropdown.locator('option');
-    
-    // Deberían haber 4 opciones de ordenamiento
-    await expect(opciones).toHaveCount(4);
-    
-    // Verificar los textos
-    await expect(opciones.nth(0)).toHaveText('Name (A to Z)');
-    await expect(opciones.nth(1)).toHaveText('Name (Z to A)');
-    await expect(opciones.nth(2)).toHaveText('Price (low to high)');
-    await expect(opciones.nth(3)).toHaveText('Price (high to low)');
   });
 
 });

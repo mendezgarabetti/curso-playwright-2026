@@ -10,7 +10,7 @@
 | `03-tests-con-sesion.spec.js` | Tests que usan sesión reutilizada | Demo |
 | `04-debug-tools.spec.js` | Herramientas: pause, console.log, screenshots | Demo |
 | `05-buenas-practicas.spec.js` | Patrones y anti-patrones de debugging | Demo |
-| `taller-debug-ARREGLAR.spec.js` | 🔴 10 tests rotos para arreglar | Práctica |
+| `taller-debug-ARREGLAR.spec.js` | 🔴 10 tests rotos para arreglar | **Práctica** |
 
 ## 🎯 Objetivos de la clase
 
@@ -47,18 +47,58 @@ npx playwright test taller-debug --project=chromium
 ## 📚 Temas cubiertos
 
 ### Trace Viewer
-- Configuración: `trace: 'retain-on-failure'` (recomendado)
-- Información capturada: screenshots, DOM, network, console
-- Cómo abrir: desde reporte HTML o con `show-trace`
-- Navegar el timeline paso a paso
+
+```javascript
+// Configuración en playwright.config.js
+export default defineConfig({
+  use: {
+    trace: 'retain-on-failure', // RECOMENDADO
+    // trace: 'on',             // Siempre
+    // trace: 'off',            // Nunca
+  }
+});
+```
+
+**Información capturada:**
+- Screenshots en cada paso
+- Estado del DOM
+- Requests/Responses de red
+- Logs de consola
+- Tiempo de cada acción
 
 ### Storage State (Reutilización de Sesiones)
-- El problema: login repetido en cada test
-- La solución: guardar y reutilizar estado de autenticación
-- Configuración en `playwright.config.js`
-- Setup global con `dependencies`
+
+```javascript
+// auth.setup.js - Se ejecuta una vez
+import { test as setup } from '@playwright/test';
+
+setup('login', async ({ page }) => {
+  await page.goto('/login');
+  await page.fill('#user', 'admin');
+  await page.fill('#pass', 'secret');
+  await page.click('button[type="submit"]');
+  
+  // Guardar estado
+  await page.context().storageState({ path: '.auth/user.json' });
+});
+```
+
+```javascript
+// playwright.config.js
+export default defineConfig({
+  projects: [
+    { name: 'setup', testMatch: /auth\.setup\.js/ },
+    { 
+      name: 'chromium',
+      use: { storageState: '.auth/user.json' },
+      dependencies: ['setup']
+    }
+  ]
+});
+```
 
 ### Herramientas de Debug
+
 | Herramienta | Uso | Comando |
 |-------------|-----|---------|
 | `page.pause()` | Pausa interactiva | Agregar en código |
@@ -68,17 +108,29 @@ npx playwright test taller-debug --project=chromium
 | Screenshots | Capturas manuales | `page.screenshot()` |
 
 ### Buenas Prácticas
-- ✅ Logs estructurados con prefijos
-- ✅ Screenshots en puntos clave
-- ✅ Verificaciones incrementales
-- ✅ Tests aislados e independientes
-- ✅ Helper functions para código DRY
-- ❌ Evitar sleeps arbitrarios
-- ❌ Evitar hardcodear índices
+
+```javascript
+// ✅ Logs estructurados
+console.log('🚀 [TEST START] Login');
+console.log('📍 [NAV] Página cargada');
+console.log('✅ [ASSERT] Verificación OK');
+
+// ✅ Screenshots en puntos clave
+await page.screenshot({ path: 'debug/paso-1.png' });
+
+// ✅ Verificaciones incrementales
+await expect(input).toHaveValue('texto');
+
+// ❌ Evitar sleeps
+// await page.waitForTimeout(3000);
+
+// ❌ Evitar índices hardcodeados
+// await items.nth(2).click();
+```
 
 ## 🔧 Taller de Depuración
 
-El archivo `taller-debug-ARREGLAR.spec.js` contiene **10 tests rotos** con errores intencionales:
+El archivo `taller-debug-ARREGLAR.spec.js` contiene **10 tests rotos**:
 
 1. **Selector incorrecto** - typo en data-test
 2. **Aserción incorrecta** - cantidad equivocada
@@ -91,47 +143,32 @@ El archivo `taller-debug-ARREGLAR.spec.js` contiene **10 tests rotos** con error
 9. **URL mal escrita** - typo en dominio
 10. **Lógica incorrecta** - badge vacío no existe
 
-### Instrucciones del taller
+### Instrucciones
 
-1. Ejecutar los tests y ver cuáles fallan:
-   ```bash
-   npx playwright test taller-debug --project=chromium
-   ```
+```bash
+# 1. Ejecutar y ver fallos
+npx playwright test taller-debug --project=chromium
 
-2. Para cada test fallido:
-   - Usar `--debug` o `--ui` para investigar
-   - Leer la pista en el comentario `// PISTA:`
-   - Corregir el error
-   - Verificar que pasa en verde
+# 2. Investigar con debug
+npx playwright test taller-debug --debug
 
+# 3. Arreglar cada test
 
+# 4. Verificar que pasan
+npx playwright test taller-debug
+```
 
-## 🔗 Configuración de Storage State
+## ⚙️ Configuración ES Modules
 
-Para usar storage state en producción, agregar a `playwright.config.js`:
+```json
+// package.json
+{ "type": "module" }
+```
 
 ```javascript
-projects: [
-  // Setup project - hace login y guarda estado
-  {
-    name: 'setup',
-    testMatch: /auth\.setup\.js/,
-  },
-  // Tests que usan el estado guardado
-  {
-    name: 'chromium',
-    use: { 
-      ...devices['Desktop Chrome'],
-      storageState: '.auth/user.json',
-    },
-    dependencies: ['setup'],
-  },
-]
-```
-
-Y agregar a `.gitignore`:
-```
-.auth/
+// Imports
+import { test, expect } from '@playwright/test';
+import path from 'path';
 ```
 
 ## 📖 Próxima clase
@@ -139,4 +176,4 @@ Y agregar a `.gitignore`:
 **Día 4: Arquitectura Escalable (Page Object Model)**
 - Patrón POM para separar lógica de tests
 - Componentes reutilizables
-- Refactorización de tests existentes
+- Fixtures personalizados

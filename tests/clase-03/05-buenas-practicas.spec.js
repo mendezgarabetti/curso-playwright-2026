@@ -1,15 +1,14 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
  * CLASE 3: Buenas Prácticas de Depuración
  * =======================================
- * Una guía de patrones y anti-patrones para debugging efectivo.
  */
 
 test.describe('✅ BUENA PRÁCTICA: Logs Estructurados', () => {
 
-  test('Usar prefijos para identificar logs fácilmente', async ({ page }) => {
+  test('Usar prefijos para identificar logs', async ({ page }) => {
     console.log('🚀 [TEST START] Login y compra');
     
     await page.goto('https://www.saucedemo.com/');
@@ -56,13 +55,10 @@ test.describe('✅ BUENA PRÁCTICA: Screenshots en Puntos Clave', () => {
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     await expect(page).toHaveURL(/.*inventory.html/);
-    await screenshot('inventory-loaded');
+    await screenshot('inventory-page');
     
     await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
     await screenshot('product-added');
-    
-    await page.locator('.shopping_cart_link').click();
-    await screenshot('cart-view');
   });
 
 });
@@ -71,137 +67,49 @@ test.describe('✅ BUENA PRÁCTICA: Verificaciones Incrementales', () => {
 
   test('Verificar cada paso antes de continuar', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
-    
-    // Verificar que la página cargó
     await expect(page.locator('[data-test="login-button"]')).toBeVisible();
     
-    // Llenar y verificar cada campo
     await page.locator('[data-test="username"]').fill('standard_user');
     await expect(page.locator('[data-test="username"]')).toHaveValue('standard_user');
     
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await expect(page.locator('[data-test="password"]')).toHaveValue('secret_sauce');
     
-    // Click y verificar resultado
     await page.locator('[data-test="login-button"]').click();
     await expect(page).toHaveURL(/.*inventory.html/);
-    
-    // Si algo falla, sabemos EXACTAMENTE dónde
+    await expect(page.locator('[data-test="title"]')).toHaveText('Products');
   });
 
 });
 
-test.describe('❌ ANTI-PATRÓN: Tests Frágiles', () => {
+test.describe('❌ ANTI-PATRÓN: Evitar Sleeps', () => {
 
-  test.skip('Evitar: Hardcodear índices de arrays', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
-    
-    // ❌ MAL: Depende del orden de los elementos
-    // Si cambia el orden, el test falla
-    await page.locator('.inventory_item').nth(3).click();
-    
-    // ✅ MEJOR: Usar selector específico por nombre
-    // await page.locator('[data-test="item-4-title-link"]').click();
-  });
-
-  test.skip('Evitar: Sleeps arbitrarios', async ({ page }) => {
+  test('Mal: Sleep arbitrario', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     
     // ❌ MAL: Esperar tiempo fijo
-    // await page.waitForTimeout(5000);
+    // await page.waitForTimeout(3000);
     
-    // ✅ MEJOR: Esperar condición específica
+    // ✅ BIEN: Esperar condición específica
     await expect(page.locator('[data-test="login-button"]')).toBeVisible();
   });
 
 });
 
-test.describe('✅ BUENA PRÁCTICA: Mensajes de Error Descriptivos', () => {
+test.describe('❌ ANTI-PATRÓN: Evitar Índices Hardcodeados', () => {
 
-  test('Agregar contexto a las aserciones', async ({ page }) => {
+  test('Mal: Usar índices sin contexto', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     
-    // Las aserciones pueden tener un mensaje personalizado
-    // que aparece si fallan
-    const productos = page.locator('[data-test="inventory-item"]');
-    const count = await productos.count();
+    // ❌ MAL: ¿Qué producto es el índice 2?
+    // await page.locator('.inventory_item').nth(2).click();
     
-    // Mensaje personalizado en caso de fallo
-    expect(count, `Esperaba 6 productos pero encontré ${count}`).toBe(6);
-  });
-
-});
-
-test.describe('✅ BUENA PRÁCTICA: Aislamiento de Tests', () => {
-
-  // Cada test debe ser independiente
-  // No depender del estado de tests anteriores
-  
-  test('Test A: agregar producto', async ({ page }) => {
-    // Setup completo dentro del test
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
-    
-    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('1');
-  });
-
-  test('Test B: verificar ordenamiento', async ({ page }) => {
-    // Setup completo dentro del test (independiente de Test A)
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
-    
-    await page.locator('[data-test="product-sort-container"]').selectOption('lohi');
-    const primerPrecio = page.locator('[data-test="inventory-item-price"]').first();
-    await expect(primerPrecio).toHaveText('$7.99');
-  });
-
-});
-
-test.describe('✅ BUENA PRÁCTICA: Helper Functions', () => {
-
-  // Extraer lógica repetida a funciones helper
-  
-  async function login(page, username = 'standard_user', password = 'secret_sauce') {
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill(username);
-    await page.locator('[data-test="password"]').fill(password);
-    await page.locator('[data-test="login-button"]').click();
-    await expect(page).toHaveURL(/.*inventory.html/);
-  }
-
-  async function addToCart(page, productDataTest) {
-    await page.locator(`[data-test="add-to-cart-${productDataTest}"]`).click();
-  }
-
-  test('Usar helpers para código limpio', async ({ page }) => {
-    await login(page);
-    
-    await addToCart(page, 'sauce-labs-backpack');
-    await addToCart(page, 'sauce-labs-bike-light');
-    
-    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('2');
-  });
-
-  test('Helpers con parámetros personalizados', async ({ page }) => {
-    // Probar con usuario problemático
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('problem_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
-    
-    // Este usuario tiene bugs conocidos en SauceDemo
-    await expect(page).toHaveURL(/.*inventory.html/);
+    // ✅ BIEN: Selector descriptivo
+    await page.locator('[data-test="item-4-title-link"]').click();
+    await expect(page.locator('[data-test="inventory-item-name"]')).toHaveText('Sauce Labs Backpack');
   });
 
 });

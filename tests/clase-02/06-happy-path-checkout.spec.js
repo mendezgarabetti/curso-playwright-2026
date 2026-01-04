@@ -1,177 +1,147 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
- * CLASE 2: El Camino Feliz (Happy Path)
- * =====================================
- * El Happy Path es el flujo principal de la aplicación donde
- * todo sale bien. Es el primer candidato a automatizar.
+ * CLASE 2: Happy Path - Flujo de Checkout Completo
+ * ================================================
+ * Un "Happy Path" es el flujo ideal donde todo funciona bien.
+ * Este test demuestra un flujo E2E completo con validaciones
+ * en cada paso.
  * 
- * Características de un buen Happy Path:
- * - Cubre el flujo de negocio más importante
- * - Tiene validaciones en CADA paso
- * - Es independiente (no depende de otros tests)
- * - Es idempotente (puede correrse múltiples veces)
+ * Flujo: Login → Productos → Carrito → Checkout → Confirmación
  */
 
-test.describe('Happy Path: Compra Completa en SauceDemo', () => {
+test.describe('Happy Path: Compra Completa con Validaciones', () => {
 
-  test('Flujo completo: Login → Producto → Carrito → Checkout → Confirmación', async ({ page }) => {
+  test('Flujo completo de compra de un producto', async ({ page }) => {
     
     // ═══════════════════════════════════════════════════════════════════
     // PASO 1: LOGIN
     // ═══════════════════════════════════════════════════════════════════
-    await test.step('Login con usuario válido', async () => {
+    await test.step('Login con usuario estándar', async () => {
       await page.goto('https://www.saucedemo.com/');
       
       // Verificar que estamos en la página de login
       await expect(page).toHaveTitle('Swag Labs');
       await expect(page.locator('[data-test="login-button"]')).toBeVisible();
       
-      // Ingresar credenciales
+      // Realizar login
       await page.locator('[data-test="username"]').fill('standard_user');
       await page.locator('[data-test="password"]').fill('secret_sauce');
       await page.locator('[data-test="login-button"]').click();
       
-      // Validar login exitoso
+      // Verificar login exitoso
       await expect(page).toHaveURL(/.*inventory.html/);
       await expect(page.locator('[data-test="title"]')).toHaveText('Products');
     });
 
     // ═══════════════════════════════════════════════════════════════════
-    // PASO 2: SELECCIONAR PRODUCTOS
+    // PASO 2: SELECCIONAR PRODUCTO
     // ═══════════════════════════════════════════════════════════════════
-    await test.step('Agregar productos al carrito', async () => {
-      // Agregar Sauce Labs Backpack
+    await test.step('Seleccionar producto y agregarlo al carrito', async () => {
+      // Verificar que hay productos disponibles
+      await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(6);
+      
+      // Verificar el producto que vamos a agregar
+      const backpack = page.locator('[data-test="inventory-item"]').filter({ hasText: 'Sauce Labs Backpack' });
+      await expect(backpack).toBeVisible();
+      await expect(backpack.locator('[data-test="inventory-item-price"]')).toHaveText('$29.99');
+      
+      // Agregar al carrito
       await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
       
-      // Validar que se agregó (badge del carrito)
+      // Verificar que se agregó
       await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('1');
-      
-      // El botón cambió a "Remove"
       await expect(page.locator('[data-test="remove-sauce-labs-backpack"]')).toBeVisible();
-      
-      // Agregar otro producto
-      await page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]').click();
-      
-      // Ahora hay 2 items
-      await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('2');
     });
 
     // ═══════════════════════════════════════════════════════════════════
-    // PASO 3: REVISAR CARRITO
+    // PASO 3: IR AL CARRITO
     // ═══════════════════════════════════════════════════════════════════
-    await test.step('Ir al carrito y verificar productos', async () => {
-      // Click en el carrito
+    await test.step('Navegar al carrito y verificar contenido', async () => {
       await page.locator('.shopping_cart_link').click();
       
-      // Validar URL
+      // Verificar que estamos en el carrito
       await expect(page).toHaveURL(/.*cart.html/);
       await expect(page.locator('[data-test="title"]')).toHaveText('Your Cart');
       
-      // Verificar que están los 2 productos
-      const items = page.locator('[data-test="inventory-item"]');
-      await expect(items).toHaveCount(2);
-      
-      // Verificar nombres de productos
-      await expect(page.locator('[data-test="inventory-item-name"]').first()).toContainText('Sauce Labs Backpack');
-      await expect(page.locator('[data-test="inventory-item-name"]').nth(1)).toContainText('Sauce Labs Bike Light');
-      
-      // Verificar precios individuales
-      await expect(page.locator('[data-test="inventory-item-price"]').first()).toHaveText('$29.99');
-      await expect(page.locator('[data-test="inventory-item-price"]').nth(1)).toHaveText('$9.99');
+      // Verificar el producto en el carrito
+      await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(1);
+      await expect(page.locator('[data-test="inventory-item-name"]')).toHaveText('Sauce Labs Backpack');
+      await expect(page.locator('[data-test="inventory-item-price"]')).toHaveText('$29.99');
+      await expect(page.locator('[data-test="item-quantity"]')).toHaveText('1');
     });
 
     // ═══════════════════════════════════════════════════════════════════
-    // PASO 4: CHECKOUT - INFORMACIÓN
+    // PASO 4: INICIAR CHECKOUT
     // ═══════════════════════════════════════════════════════════════════
-    await test.step('Completar información de envío', async () => {
-      // Iniciar checkout
+    await test.step('Iniciar proceso de checkout', async () => {
       await page.locator('[data-test="checkout"]').click();
       
-      // Validar página de información
+      // Verificar que estamos en el formulario de checkout
       await expect(page).toHaveURL(/.*checkout-step-one.html/);
       await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Your Information');
       
+      // Verificar que los campos están vacíos
+      await expect(page.locator('[data-test="firstName"]')).toBeEmpty();
+      await expect(page.locator('[data-test="lastName"]')).toBeEmpty();
+      await expect(page.locator('[data-test="postalCode"]')).toBeEmpty();
+    });
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PASO 5: LLENAR FORMULARIO DE ENVÍO
+    // ═══════════════════════════════════════════════════════════════════
+    await test.step('Completar información de envío', async () => {
       // Llenar formulario
-      await page.locator('[data-test="firstName"]').fill('Juan');
-      await page.locator('[data-test="lastName"]').fill('Pérez');
-      await page.locator('[data-test="postalCode"]').fill('5000');
+      await page.locator('[data-test="firstName"]').fill('Estudiante');
+      await page.locator('[data-test="lastName"]').fill('QA');
+      await page.locator('[data-test="postalCode"]').fill('12345');
       
-      // Verificar que los campos tienen los valores correctos
-      await expect(page.locator('[data-test="firstName"]')).toHaveValue('Juan');
-      await expect(page.locator('[data-test="lastName"]')).toHaveValue('Pérez');
-      await expect(page.locator('[data-test="postalCode"]')).toHaveValue('5000');
+      // Verificar que se llenaron correctamente
+      await expect(page.locator('[data-test="firstName"]')).toHaveValue('Estudiante');
+      await expect(page.locator('[data-test="lastName"]')).toHaveValue('QA');
+      await expect(page.locator('[data-test="postalCode"]')).toHaveValue('12345');
       
       // Continuar
       await page.locator('[data-test="continue"]').click();
-    });
-
-    // ═══════════════════════════════════════════════════════════════════
-    // PASO 5: CHECKOUT - RESUMEN
-    // ═══════════════════════════════════════════════════════════════════
-    await test.step('Revisar resumen de compra', async () => {
-      // Validar página de resumen
+      
+      // Verificar que avanzamos al resumen
       await expect(page).toHaveURL(/.*checkout-step-two.html/);
       await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');
-      
-      // Verificar productos en el resumen
-      const items = page.locator('[data-test="inventory-item"]');
-      await expect(items).toHaveCount(2);
-      
-      // Verificar información de pago
-      await expect(page.locator('[data-test="payment-info-value"]')).toBeVisible();
-      await expect(page.locator('[data-test="shipping-info-value"]')).toBeVisible();
-      
-      // Verificar totales
-      const subtotal = page.locator('[data-test="subtotal-label"]');
-      await expect(subtotal).toContainText('$39.98'); // 29.99 + 9.99
-      
-      const tax = page.locator('[data-test="tax-label"]');
-      await expect(tax).toBeVisible();
-      
-      const total = page.locator('[data-test="total-label"]');
-      await expect(total).toBeVisible();
     });
 
     // ═══════════════════════════════════════════════════════════════════
-    // PASO 6: FINALIZAR COMPRA
+    // PASO 6: REVISAR RESUMEN
+    // ═══════════════════════════════════════════════════════════════════
+    await test.step('Verificar resumen del pedido', async () => {
+      // Verificar producto en resumen
+      await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(1);
+      await expect(page.locator('[data-test="inventory-item-name"]')).toHaveText('Sauce Labs Backpack');
+      
+      // Verificar totales
+      await expect(page.locator('[data-test="subtotal-label"]')).toContainText('$29.99');
+      await expect(page.locator('[data-test="tax-label"]')).toBeVisible();
+      await expect(page.locator('[data-test="total-label"]')).toBeVisible();
+      
+      // Verificar información de envío
+      await expect(page.locator('[data-test="shipping-info-value"]')).toBeVisible();
+    });
+
+    // ═══════════════════════════════════════════════════════════════════
+    // PASO 7: FINALIZAR COMPRA
     // ═══════════════════════════════════════════════════════════════════
     await test.step('Finalizar compra y verificar confirmación', async () => {
-      // Click en Finish
       await page.locator('[data-test="finish"]').click();
       
-      // Validar página de confirmación
+      // Verificar página de confirmación
       await expect(page).toHaveURL(/.*checkout-complete.html/);
       await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Complete!');
       
       // Verificar mensaje de éxito
-      const mensajeExito = page.locator('[data-test="complete-header"]');
-      await expect(mensajeExito).toBeVisible();
-      await expect(mensajeExito).toHaveText('Thank you for your order!');
+      await expect(page.locator('[data-test="complete-header"]')).toHaveText('Thank you for your order!');
+      await expect(page.locator('[data-test="complete-text"]')).toBeVisible();
       
-      // Verificar descripción
-      const descripcion = page.locator('[data-test="complete-text"]');
-      await expect(descripcion).toContainText('Your order has been dispatched');
-      
-      // Verificar imagen de confirmación
-      await expect(page.locator('[data-test="pony-express"]')).toBeVisible();
-      
-      // Verificar botón para volver a productos
-      await expect(page.locator('[data-test="back-to-products"]')).toBeVisible();
-    });
-
-    // ═══════════════════════════════════════════════════════════════════
-    // PASO 7: VOLVER AL INICIO (Cleanup/Reset)
-    // ═══════════════════════════════════════════════════════════════════
-    await test.step('Volver a productos', async () => {
-      await page.locator('[data-test="back-to-products"]').click();
-      
-      // Verificar que volvimos al inventario
-      await expect(page).toHaveURL(/.*inventory.html/);
-      await expect(page.locator('[data-test="title"]')).toHaveText('Products');
-      
-      // El carrito debería estar vacío después de la compra
+      // Verificar que el carrito está vacío
       await expect(page.locator('[data-test="shopping-cart-badge"]')).not.toBeVisible();
     });
 
@@ -179,61 +149,87 @@ test.describe('Happy Path: Compra Completa en SauceDemo', () => {
 
 });
 
-test.describe('Atomicidad: ¿Test largo o tests cortos?', () => {
+test.describe('Happy Path: Compra de Múltiples Productos', () => {
 
-  /**
-   * ENFOQUE 1: Test largo (Happy Path completo)
-   * Pros:
-   * - Valida el flujo completo de negocio
-   * - Detecta problemas de integración entre pasos
-   * 
-   * Contras:
-   * - Si falla en el paso 5, hay que investigar todo
-   * - Más lento de ejecutar
-   * - Un fallo bloquea toda la validación
-   */
-
-  /**
-   * ENFOQUE 2: Tests atómicos (uno por funcionalidad)
-   * Pros:
-   * - Fácil identificar qué falló
-   * - Se pueden ejecutar en paralelo
-   * - Más rápidos individualmente
-   * 
-   * Contras:
-   * - Requieren setup repetido
-   * - No validan la integración completa
-   */
-
-  // Ejemplo de test atómico: Solo login
-  test('Atómico: Login exitoso', async ({ page }) => {
+  test('Comprar 3 productos diferentes', async ({ page }) => {
+    // Login
     await page.goto('https://www.saucedemo.com/');
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     
-    await expect(page).toHaveURL(/.*inventory.html/);
-  });
-
-  // Ejemplo de test atómico: Solo agregar al carrito (requiere login primero)
-  test('Atómico: Agregar producto al carrito', async ({ page }) => {
-    // Setup: Login
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
-    
-    // Test: Agregar producto
+    // Agregar 3 productos
     await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('1');
+    await page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]').click();
+    await page.locator('[data-test="add-to-cart-sauce-labs-bolt-t-shirt"]').click();
+    
+    // Verificar carrito
+    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('3');
+    
+    // Ir al carrito
+    await page.locator('.shopping_cart_link').click();
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(3);
+    
+    // Checkout
+    await page.locator('[data-test="checkout"]').click();
+    await page.locator('[data-test="firstName"]').fill('Test');
+    await page.locator('[data-test="lastName"]').fill('User');
+    await page.locator('[data-test="postalCode"]').fill('99999');
+    await page.locator('[data-test="continue"]').click();
+    
+    // Verificar subtotal (suma de los 3 productos)
+    // Backpack: $29.99, Bike Light: $9.99, T-Shirt: $15.99 = $55.97
+    await expect(page.locator('[data-test="subtotal-label"]')).toContainText('$55.97');
+    
+    // Finalizar
+    await page.locator('[data-test="finish"]').click();
+    
+    // Verificar éxito
+    await expect(page.locator('[data-test="complete-header"]')).toHaveText('Thank you for your order!');
   });
 
-  /**
-   * RECOMENDACIÓN:
-   * - Tener UN test de Happy Path completo (smoke test / sanity check)
-   * - Tener tests atómicos para cada funcionalidad
-   * - Ejecutar el Happy Path en cada deploy
-   * - Ejecutar tests atómicos para validación específica
-   */
+});
+
+test.describe('Validaciones de Negocio', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('https://www.saucedemo.com/');
+    await page.locator('[data-test="username"]').fill('standard_user');
+    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="login-button"]').click();
+  });
+
+  test('No se puede hacer checkout con carrito vacío', async ({ page }) => {
+    // Ir al carrito vacío
+    await page.locator('.shopping_cart_link').click();
+    
+    // Verificar que el carrito está vacío
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(0);
+    
+    // El botón de checkout debería estar presente pero...
+    // (SauceDemo permite hacer checkout vacío, pero una app real no debería)
+    await expect(page.locator('[data-test="checkout"]')).toBeVisible();
+  });
+
+  test('Se pueden quitar productos del carrito', async ({ page }) => {
+    // Agregar productos
+    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
+    await page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]').click();
+    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('2');
+    
+    // Ir al carrito
+    await page.locator('.shopping_cart_link').click();
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(2);
+    
+    // Quitar uno
+    await page.locator('[data-test="remove-sauce-labs-backpack"]').click();
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(1);
+    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('1');
+    
+    // Quitar el otro
+    await page.locator('[data-test="remove-sauce-labs-bike-light"]').click();
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(0);
+    await expect(page.locator('[data-test="shopping-cart-badge"]')).not.toBeVisible();
+  });
 
 });

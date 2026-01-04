@@ -1,5 +1,5 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
  * CLASE 2: Catálogo de Aserciones (Assertions)
@@ -77,46 +77,47 @@ test.describe('Aserciones de Texto y Contenido', () => {
     await expect(page.locator('[data-test="firstName"]')).toHaveValue('Juan');
   });
 
-  test('toBeEmpty - elemento sin contenido', async ({ page }) => {
-    // Ir al checkout
+  test('toBeEmpty - input vacío', async ({ page }) => {
     await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
     await page.locator('.shopping_cart_link').click();
     await page.locator('[data-test="checkout"]').click();
     
-    // Los inputs deberían estar vacíos inicialmente
+    // Los campos deberían estar vacíos inicialmente
     await expect(page.locator('[data-test="firstName"]')).toBeEmpty();
     await expect(page.locator('[data-test="lastName"]')).toBeEmpty();
   });
 
 });
 
-test.describe('Aserciones de Página y URL', () => {
+test.describe('Aserciones de Página', () => {
 
-  test('toHaveURL - verificar la URL actual', async ({ page }) => {
+  test('toHaveURL - verificar URL', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     
     // URL exacta
     await expect(page).toHaveURL('https://www.saucedemo.com/');
     
-    // Login
+    // URL con regex
+    await expect(page).toHaveURL(/saucedemo\.com/);
+    
+    // Login y verificar nueva URL
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     
-    // URL con regex (patrón)
     await expect(page).toHaveURL(/.*inventory.html/);
   });
 
-  test('toHaveTitle - verificar el título de la página', async ({ page }) => {
+  test('toHaveTitle - verificar título de la pestaña', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     
-    // El título de la pestaña del navegador
     await expect(page).toHaveTitle('Swag Labs');
+    await expect(page).toHaveTitle(/Swag/);
   });
 
 });
 
-test.describe('Aserciones de Atributos y Estado', () => {
+test.describe('Aserciones de Atributos y Clases', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
@@ -125,14 +126,16 @@ test.describe('Aserciones de Atributos y Estado', () => {
     await page.locator('[data-test="login-button"]').click();
   });
 
-  test('toHaveAttribute - verificar atributos HTML', async ({ page }) => {
-    // Verificar que el enlace del carrito tenga el atributo correcto
-    const carrito = page.locator('.shopping_cart_link');
-    await expect(carrito).toHaveAttribute('href', './cart.html');
+  test('toHaveAttribute - verificar atributo HTML', async ({ page }) => {
+    // Verificar el atributo data-test
+    await expect(page.locator('[data-test="title"]')).toHaveAttribute('data-test', 'title');
+    
+    // Verificar la clase del contenedor
+    const inventario = page.locator('#inventory_container');
+    await expect(inventario).toHaveAttribute('class', /inventory_container/);
   });
 
-  test('toHaveClass - verificar clases CSS', async ({ page }) => {
-    // Verificar que el contenedor de productos tenga su clase
+  test('toHaveClass - verificar clase CSS', async ({ page }) => {
     const inventario = page.locator('#inventory_container');
     await expect(inventario).toHaveClass(/inventory_container/);
   });
@@ -144,7 +147,7 @@ test.describe('Aserciones de Atributos y Estado', () => {
   });
 
   test('toHaveCSS - verificar estilos CSS', async ({ page }) => {
-    // Verificar el color del título (esto puede variar según la implementación)
+    // Verificar el tamaño de fuente del título
     const titulo = page.locator('[data-test="title"]');
     // Nota: los colores se devuelven en formato rgb()
     await expect(titulo).toHaveCSS('font-size', '24px');

@@ -1,57 +1,53 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
- * EJERCICIO 1: Agregar Aserciones
- * ================================
- * Este test navega por SauceDemo pero NO tiene aserciones.
- * Tu tarea es agregar aserciones donde dice // TODO
- * 
- * Criterios de éxito:
- * - Mínimo 8 aserciones
- * - Usar al menos 4 tipos diferentes de expect (toBeVisible, toHaveText, toHaveURL, etc.)
- * - El test debe pasar en verde
+ * ╔═══════════════════════════════════════════════════════════════════════╗
+ * ║  EJERCICIO CLASE 2: Aserciones                                        ║
+ * ╠═══════════════════════════════════════════════════════════════════════╣
+ * ║  Objetivo: Agregar aserciones en cada paso del flujo                  ║
+ * ║                                                                       ║
+ * ║  Requisitos:                                                          ║
+ * ║  - Mínimo 8 aserciones                                                ║
+ * ║  - Usar al menos 4 tipos diferentes de aserciones                     ║
+ * ║  - Completar todos los TODO                                           ║
+ * ╚═══════════════════════════════════════════════════════════════════════╝
  */
 
-test.describe('EJERCICIO: Agregar Aserciones', () => {
+test.describe('EJERCICIO: Agregar Aserciones al Flujo', () => {
 
-  test('Flujo de login y navegación - AGREGAR ASERCIONES', async ({ page }) => {
+  test('Flujo de compra con validaciones', async ({ page }) => {
     
     // ═══════════════════════════════════════════════════════════════════
     // PASO 1: Ir a la página de login
     // ═══════════════════════════════════════════════════════════════════
     await page.goto('https://www.saucedemo.com/');
     
+    // TODO: Verificar que la URL es correcta
+    // await expect(page).toHaveURL(???);
+    
     // TODO: Verificar que el título de la página es "Swag Labs"
     // await expect(page).toHaveTitle(???);
-    
-    // TODO: Verificar que el botón de login está visible
-    // await expect(???).toBeVisible();
 
     // ═══════════════════════════════════════════════════════════════════
     // PASO 2: Hacer login
     // ═══════════════════════════════════════════════════════════════════
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
-    
-    // TODO: Verificar que el campo username tiene el valor "standard_user"
-    // await expect(???).toHaveValue(???);
-    
     await page.locator('[data-test="login-button"]').click();
     
-    // TODO: Verificar que la URL contiene "inventory.html"
+    // TODO: Verificar que llegamos a la página de inventario
     // await expect(page).toHaveURL(???);
     
-    // TODO: Verificar que el título de la página dice "Products"
+    // TODO: Verificar que el título dice "Products"
     // await expect(???).toHaveText(???);
 
     // ═══════════════════════════════════════════════════════════════════
-    // PASO 3: Verificar productos
+    // PASO 3: Verificar la página de productos
     // ═══════════════════════════════════════════════════════════════════
     
     // TODO: Verificar que hay exactamente 6 productos
-    // const productos = page.locator('[data-test="inventory-item"]');
-    // await expect(productos).toHaveCount(???);
+    // await expect(???).toHaveCount(???);
     
     // TODO: Verificar que el dropdown de ordenamiento está visible
     // await expect(???).toBeVisible();
@@ -107,3 +103,20 @@ test.describe('EJERCICIO BONUS: Soft Assertions', () => {
   });
 
 });
+
+/**
+ * CRITERIOS DE ÉXITO:
+ * 
+ * ✅ Mínimo 8 aserciones completadas
+ * ✅ Usar al menos 4 tipos diferentes:
+ *    - toHaveURL()
+ *    - toHaveTitle()
+ *    - toHaveText() / toContainText()
+ *    - toBeVisible()
+ *    - toHaveCount()
+ * ✅ Todos los tests pasan en verde
+ * ✅ No hay TODO pendientes
+ * 
+ * BONUS:
+ * ✅ Convertir el segundo test a soft assertions
+ */

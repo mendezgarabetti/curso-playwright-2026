@@ -1,30 +1,28 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
  * CLASE 2: Elementos Dinámicos
  * ============================
- * Las aplicaciones web modernas tienen muchos elementos que aparecen,
- * desaparecen o cambian dinámicamente. Playwright maneja la mayoría
- * automáticamente, pero hay casos donde necesitamos ayuda extra.
- * 
- * Usamos https://the-internet.herokuapp.com para estos ejemplos
- * porque tiene casos de uso específicos bien aislados.
+ * Muchas aplicaciones modernas tienen elementos que:
+ * - Aparecen/desaparecen dinámicamente
+ * - Requieren hover para mostrarse
+ * - Están dentro de iframes
+ * - Son diálogos de JavaScript (alert, confirm, prompt)
  */
 
-test.describe('Elementos que Aparecen y Desaparecen', () => {
+test.describe('Elementos que aparecen/desaparecen', () => {
 
-  test('Elemento que aparece después de una espera', async ({ page }) => {
+  test('Esperar que un elemento aparezca', async ({ page }) => {
     await page.goto('https://the-internet.herokuapp.com/dynamic_loading/1');
     
-    // El elemento existe en el DOM pero está oculto
+    // El elemento existe pero está oculto (display: none)
     await expect(page.locator('#finish')).toBeHidden();
     
     // Hacer click en Start
     await page.locator('#start button').click();
     
-    // Esperar a que aparezca el resultado
-    // Playwright reintenta automáticamente hasta que sea visible
+    // Esperar a que aparezca (Playwright lo hace automáticamente)
     await expect(page.locator('#finish h4')).toBeVisible({ timeout: 10000 });
     await expect(page.locator('#finish h4')).toHaveText('Hello World!');
   });
@@ -87,7 +85,7 @@ test.describe('Checkboxes', () => {
 
 test.describe('Dropdown Dinámico (No-Select)', () => {
 
-  test('Dropdown que no es un <select> HTML', async ({ page }) => {
+  test('Dropdown que es un <select> HTML', async ({ page }) => {
     await page.goto('https://the-internet.herokuapp.com/dropdown');
     
     // Este SÍ es un select normal
@@ -96,19 +94,13 @@ test.describe('Dropdown Dinámico (No-Select)', () => {
     await expect(dropdown).toHaveValue('1');
   });
 
-  test('Manejar dropdown personalizado (JS/CSS)', async ({ page }) => {
-    // SauceDemo tiene un dropdown personalizado para ordenar
+  test('Manejar dropdown de ordenamiento en SauceDemo', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     
-    // Aunque parece un dropdown custom, es un <select> real
-    // Si fuera un dropdown de JS puro, tendríamos que:
-    // 1. Click para abrir
-    // 2. Esperar que aparezcan las opciones
-    // 3. Click en la opción deseada
-    
+    // SauceDemo tiene un dropdown que es un <select> real
     const dropdown = page.locator('[data-test="product-sort-container"]');
     await dropdown.selectOption('za');
     
@@ -209,62 +201,83 @@ test.describe('Drag and Drop', () => {
     // Arrastrar A hacia B
     await columnaA.dragTo(columnaB);
     
-    // Ahora deberían estar invertidos
     // Nota: Este sitio tiene un bug conocido donde drag&drop no funciona
-    // en algunos navegadores. Es un buen ejemplo de "test que puede fallar
-    // por la aplicación, no por el test"
+    // en algunos navegadores. En una app real, esto funcionaría.
   });
 
 });
 
 test.describe('iFrames', () => {
 
-  test('Interactuar con contenido dentro de un iframe', async ({ page }) => {
+  test('frameLocator() - Interactuar dentro de un iframe', async ({ page }) => {
     await page.goto('https://the-internet.herokuapp.com/iframe');
     
-    // Localizar el iframe
+    // Obtener el frame locator
     const frame = page.frameLocator('#mce_0_ifr');
     
-    // Interactuar con elementos DENTRO del iframe
+    // Interactuar con elementos dentro del iframe
     const editor = frame.locator('#tinymce');
     
     // Limpiar y escribir nuevo contenido
     await editor.clear();
     await editor.fill('Texto escrito por Playwright');
     
-    // Verificar
+    // Verificar el contenido
     await expect(editor).toContainText('Texto escrito por Playwright');
   });
 
 });
 
-test.describe('Menú Hamburguesa (SauceDemo)', () => {
+test.describe('Upload de Archivos', () => {
 
-  test('Abrir menú lateral y navegar', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
+  test('setInputFiles() - Subir un archivo', async ({ page }) => {
+    await page.goto('https://the-internet.herokuapp.com/upload');
     
-    // Abrir menú hamburguesa
-    await page.locator('#react-burger-menu-btn').click();
+    // Crear un archivo temporal para el test
+    const fileInput = page.locator('#file-upload');
     
-    // Esperar a que el menú se abra (animación)
-    const menu = page.locator('.bm-menu-wrap');
-    await expect(menu).toBeVisible();
+    // Simular selección de archivo
+    // En un test real, usarías un archivo de fixtures
+    // await fileInput.setInputFiles('path/to/file.txt');
     
-    // Verificar opciones del menú
-    await expect(page.locator('#inventory_sidebar_link')).toBeVisible();
-    await expect(page.locator('#about_sidebar_link')).toBeVisible();
-    await expect(page.locator('#logout_sidebar_link')).toBeVisible();
-    await expect(page.locator('#reset_sidebar_link')).toBeVisible();
+    // También puedes crear el contenido en memoria:
+    await fileInput.setInputFiles({
+      name: 'test.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from('Contenido del archivo de prueba')
+    });
     
-    // Click en Logout
-    await page.locator('#logout_sidebar_link').click();
+    // Click en upload
+    await page.locator('#file-submit').click();
     
-    // Verificar que volvimos al login
-    await expect(page).toHaveURL('https://www.saucedemo.com/');
-    await expect(page.locator('[data-test="login-button"]')).toBeVisible();
+    // Verificar que se subió
+    await expect(page.locator('#uploaded-files')).toContainText('test.txt');
+  });
+
+});
+
+test.describe('Múltiples ventanas/pestañas', () => {
+
+  test('Manejar nueva ventana que se abre', async ({ page, context }) => {
+    await page.goto('https://the-internet.herokuapp.com/windows');
+    
+    // Esperar que se abra una nueva página
+    const pagePromise = context.waitForEvent('page');
+    
+    // Click que abre nueva ventana
+    await page.locator('a:text("Click Here")').click();
+    
+    // Obtener la nueva página
+    const newPage = await pagePromise;
+    
+    // Interactuar con la nueva página
+    await expect(newPage.locator('h3')).toHaveText('New Window');
+    
+    // Cerrar la nueva página
+    await newPage.close();
+    
+    // Volver a la página original (ya tiene el focus)
+    await expect(page.locator('h3')).toHaveText('Opening a new window');
   });
 
 });

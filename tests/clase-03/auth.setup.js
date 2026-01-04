@@ -1,6 +1,10 @@
 // @ts-check
-const { test as setup, expect } = require('@playwright/test');
-const path = require('path');
+import { test as setup, expect } from '@playwright/test';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * CLASE 3: Global Setup para Autenticación
@@ -42,7 +46,6 @@ setup('Autenticación global', async ({ page }) => {
   await expect(page.locator('[data-test="title"]')).toHaveText('Products');
   
   // 4. Guardar el estado de la sesión
-  // Esto incluye: cookies, localStorage, sessionStorage
   await page.context().storageState({ path: authFile });
   
   console.log('✅ Estado de autenticación guardado en:', authFile);
@@ -55,25 +58,7 @@ setup('Autenticación global', async ({ page }) => {
  *    AGREGAR A .gitignore: .auth/
  * 
  * 2. El estado tiene fecha de expiración (según la app)
- *    Si los tokens expiran, el setup se vuelve a ejecutar
  * 
  * 3. Cada "project" puede tener su propio storageState
  *    Útil para probar con diferentes usuarios/roles
- * 
- * EJEMPLO CON MÚLTIPLES USUARIOS:
- * 
- * projects: [
- *   { name: 'setup-admin', testMatch: /admin\.setup\.js/ },
- *   { name: 'setup-user', testMatch: /user\.setup\.js/ },
- *   { 
- *     name: 'admin-tests',
- *     use: { storageState: '.auth/admin.json' },
- *     dependencies: ['setup-admin'],
- *   },
- *   { 
- *     name: 'user-tests',
- *     use: { storageState: '.auth/user.json' },
- *     dependencies: ['setup-user'],
- *   },
- * ]
  */

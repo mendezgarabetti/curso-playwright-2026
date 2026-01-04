@@ -1,93 +1,49 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
- * CLASE 3: Herramientas de Depuración
- * ===================================
- * Cuando un test falla, necesitamos herramientas para investigar.
- * Playwright ofrece varias opciones:
- * 
- * 1. page.pause() - Pausa interactiva
- * 2. --debug flag - Inspector de Playwright
- * 3. --ui flag - Modo UI con timeline
- * 4. console.log() - Logs tradicionales
- * 5. Screenshots manuales
- * 6. Trace Viewer (visto antes)
+ * CLASE 3: Herramientas de Debugging
+ * ==================================
+ * Playwright ofrece varias formas de depurar tests.
  */
 
-test.describe('page.pause(): Pausa Interactiva', () => {
+test.describe('page.pause() - Pausa Interactiva', () => {
 
-  test('Usar pause para inspeccionar el estado', async ({ page }) => {
+  test('Usar pause para inspeccionar', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
+    
+    // Descomentar para pausar aquí:
+    // await page.pause();
+    
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
     
-    // DESCOMENTAR para usar pause:
-    // await page.pause();
-    // 
-    // Cuando se ejecuta con pause:
-    // 1. Se abre el Playwright Inspector
-    // 2. El test se DETIENE aquí
-    // 3. Podés inspeccionar el DOM
-    // 4. Podés ejecutar comandos en la consola
-    // 5. Podés continuar paso a paso
+    // await page.pause(); // Otra pausa para ver el formulario lleno
+    
+    await page.locator('[data-test="login-button"]').click();
     
     await expect(page).toHaveURL(/.*inventory.html/);
-  });
-
-  test('Pause en medio de un flujo complejo', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
-    
-    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-    await page.locator('.shopping_cart_link').click();
-    
-    // DESCOMENTAR para inspeccionar el carrito:
-    // await page.pause();
-    
-    await page.locator('[data-test="checkout"]').click();
-    
-    // DESCOMENTAR para inspeccionar el formulario vacío:
-    // await page.pause();
-    
-    await page.locator('[data-test="firstName"]').fill('Test');
-    await page.locator('[data-test="lastName"]').fill('User');
-    await page.locator('[data-test="postalCode"]').fill('12345');
-    await page.locator('[data-test="continue"]').click();
-    
-    await expect(page.locator('[data-test="title"]')).toHaveText('Checkout: Overview');
   });
 
 });
 
-test.describe('Console.log para Debug', () => {
+test.describe('console.log() - Logs Tradicionales', () => {
 
-  test('Imprimir información útil durante el test', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
+  test('Debug con console.log', async ({ page }) => {
+    console.log('🚀 Iniciando test de login');
     
-    // Log de inicio
-    console.log('📍 Iniciando test de login...');
+    await page.goto('https://www.saucedemo.com/');
+    console.log('📍 Página cargada:', page.url());
     
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
+    console.log('✏️ Credenciales ingresadas');
+    
     await page.locator('[data-test="login-button"]').click();
-    
-    // Log de URL actual
-    const currentURL = page.url();
-    console.log('📍 URL después de login:', currentURL);
-    
-    // Log de elementos encontrados
-    const productos = await page.locator('[data-test="inventory-item"]').count();
-    console.log('📍 Cantidad de productos encontrados:', productos);
-    
-    // Log de texto de un elemento
-    const titulo = await page.locator('[data-test="title"]').textContent();
-    console.log('📍 Título de la página:', titulo);
+    console.log('🖱️ Click en login');
     
     await expect(page).toHaveURL(/.*inventory.html/);
+    console.log('✅ Login exitoso, URL:', page.url());
   });
 
   test('Debug de valores dinámicos', async ({ page }) => {
@@ -96,15 +52,12 @@ test.describe('Console.log para Debug', () => {
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     
-    // Obtener todos los precios
     const precios = await page.locator('[data-test="inventory-item-price"]').allTextContents();
     console.log('📍 Precios encontrados:', precios);
     
-    // Obtener todos los nombres
     const nombres = await page.locator('[data-test="inventory-item-name"]').allTextContents();
     console.log('📍 Nombres de productos:', nombres);
     
-    // Verificar algo específico
     const tieneMochila = nombres.some(n => n.includes('Backpack'));
     console.log('📍 ¿Tiene Backpack?:', tieneMochila);
     
@@ -118,7 +71,6 @@ test.describe('Screenshots Manuales', () => {
   test('Tomar screenshots en puntos clave', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     
-    // Screenshot de la página de login
     await page.screenshot({ 
       path: 'test-results/debug/01-login-page.png',
       fullPage: true 
@@ -130,65 +82,34 @@ test.describe('Screenshots Manuales', () => {
     
     await expect(page).toHaveURL(/.*inventory.html/);
     
-    // Screenshot del inventario
     await page.screenshot({ 
-      path: 'test-results/debug/02-inventory.png',
+      path: 'test-results/debug/02-inventory-page.png',
       fullPage: true 
     });
     
-    // Agregar productos
-    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-    await page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]').click();
-    
-    // Screenshot solo del carrito (elemento específico)
-    await page.locator('.shopping_cart_link').screenshot({
-      path: 'test-results/debug/03-cart-badge.png'
-    });
-    
-    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('2');
-  });
-
-  test('Screenshot de elemento específico', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
-    
-    // Screenshot solo del primer producto
+    // Screenshot de un elemento específico
     const primerProducto = page.locator('[data-test="inventory-item"]').first();
-    await primerProducto.screenshot({
-      path: 'test-results/debug/04-primer-producto.png'
+    await primerProducto.screenshot({ 
+      path: 'test-results/debug/03-primer-producto.png' 
     });
-    
-    // Screenshot del header
-    await page.locator('.header_container').screenshot({
-      path: 'test-results/debug/05-header.png'
-    });
-    
-    await expect(page.locator('[data-test="title"]')).toHaveText('Products');
   });
 
 });
 
-test.describe('Ejecutar con --debug', () => {
+test.describe('Modo Debug (--debug)', () => {
 
   /**
-   * El flag --debug abre el Playwright Inspector automáticamente:
+   * Para usar el modo debug:
+   * npx playwright test --debug
    * 
-   * npx playwright test 04-debug-tools.spec.js --debug
-   * 
-   * El Inspector permite:
-   * - Ver el código del test resaltado
-   * - Ejecutar paso a paso (Step Over)
-   * - Ver el selector que se está buscando
-   * - Probar selectores en vivo
-   * - Ver el DOM actual
+   * Esto abre:
+   * - El navegador en modo visible
+   * - El Inspector de Playwright
+   * - Permite ejecutar paso a paso
    */
 
   test('Test para ejecutar con --debug', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
-    
-    // En modo debug, cada línea se pausa
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
@@ -204,33 +125,24 @@ test.describe('Ejecutar con --debug', () => {
 test.describe('Modo UI (--ui)', () => {
 
   /**
-   * El modo UI es la forma más visual de depurar:
-   * 
+   * Para usar el modo UI:
    * npx playwright test --ui
    * 
    * Características:
-   * - Timeline visual de cada test
-   * - Watch mode (re-ejecuta al guardar cambios)
-   * - Filtrar tests por nombre/archivo
-   * - Ver traces integrados
-   * - Screenshots en cada paso
+   * - Interfaz visual completa
+   * - Timeline de acciones
+   * - DOM snapshots
+   * - Filtros de tests
    */
 
-  test('Test para explorar en modo UI', async ({ page }) => {
+  test('Test para ejecutar con --ui', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     
-    // El modo UI mostrará cada paso con su screenshot
-    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-    await page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]').click();
-    await page.locator('[data-test="add-to-cart-sauce-labs-bolt-t-shirt"]').click();
-    
-    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('3');
-    
-    await page.locator('.shopping_cart_link').click();
-    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(3);
+    await expect(page.locator('[data-test="title"]')).toHaveText('Products');
+    await expect(page.locator('[data-test="inventory-item"]')).toHaveCount(6);
   });
 
 });
