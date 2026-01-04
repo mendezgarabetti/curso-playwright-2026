@@ -1,5 +1,5 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
  * CLASE 1: Primer Test - Login Básico
@@ -65,94 +65,65 @@ test.describe('Login Básico en SauceDemo', () => {
     await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
 
     // ══════════════════════════════════════════════════════════════════════
-    // 3. ASSERT - Verificar
+    // 3. ASSERT - Verificar carrito
     // ══════════════════════════════════════════════════════════════════════
     
-    // Verificar que el carrito muestra "1"
-    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('1');
-    
-    // Verificar que el botón cambió a "Remove"
-    await expect(page.locator('[data-test="remove-sauce-labs-backpack"]')).toBeVisible();
+    // Verificar que el badge del carrito muestra "1"
+    const cartBadge = page.locator('[data-test="shopping-cart-badge"]');
+    await expect(cartBadge).toHaveText('1');
   });
 
 });
 
-test.describe('Casos Negativos de Login', () => {
+test.describe('Casos Negativos - Errores de Login', () => {
 
-  test('Error al intentar login con usuario bloqueado', async ({ page }) => {
-    // ══════════════════════════════════════════════════════════════════════
-    // 1. ARRANGE
-    // ══════════════════════════════════════════════════════════════════════
+  test.beforeEach(async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
+  });
 
-    // ══════════════════════════════════════════════════════════════════════
-    // 2. ACT - Usar usuario que sabemos que está bloqueado
-    // ══════════════════════════════════════════════════════════════════════
+  test('Error con usuario bloqueado', async ({ page }) => {
+    // Intentar login con usuario bloqueado
     await page.locator('[data-test="username"]').fill('locked_out_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
-
-    // ══════════════════════════════════════════════════════════════════════
-    // 3. ASSERT - Verificar que aparece el error
-    // ══════════════════════════════════════════════════════════════════════
-    const mensajeError = page.locator('[data-test="error"]');
     
-    // El mensaje debe ser visible
-    await expect(mensajeError).toBeVisible();
-    
-    // El mensaje debe contener el texto correcto
-    await expect(mensajeError).toContainText('Sorry, this user has been locked out');
+    // Verificar mensaje de error
+    const errorMsg = page.locator('[data-test="error"]');
+    await expect(errorMsg).toBeVisible();
+    await expect(errorMsg).toContainText('Sorry, this user has been locked out');
   });
 
-  test('Error al intentar login sin credenciales', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    
-    // Click en login sin llenar nada
+  test('Error con credenciales vacías', async ({ page }) => {
+    // Intentar login sin llenar campos
     await page.locator('[data-test="login-button"]').click();
     
-    // Debe mostrar error
-    await expect(page.locator('[data-test="error"]')).toBeVisible();
-    await expect(page.locator('[data-test="error"]')).toContainText('Username is required');
+    // Verificar mensaje de error
+    const errorMsg = page.locator('[data-test="error"]');
+    await expect(errorMsg).toBeVisible();
+    await expect(errorMsg).toContainText('Username is required');
   });
 
-  test('Error al intentar login solo con usuario', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    
-    // Solo llenar usuario
+  test('Error con password vacío', async ({ page }) => {
+    // Intentar login solo con usuario
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="login-button"]').click();
     
-    // Debe mostrar error de password
-    await expect(page.locator('[data-test="error"]')).toBeVisible();
-    await expect(page.locator('[data-test="error"]')).toContainText('Password is required');
+    // Verificar mensaje de error
+    const errorMsg = page.locator('[data-test="error"]');
+    await expect(errorMsg).toBeVisible();
+    await expect(errorMsg).toContainText('Password is required');
   });
 
   test('Error con credenciales incorrectas', async ({ page }) => {
-    await page.goto('https://www.saucedemo.com/');
-    
-    // Credenciales inventadas
+    // Intentar login con credenciales inválidas
     await page.locator('[data-test="username"]').fill('usuario_falso');
     await page.locator('[data-test="password"]').fill('password_falso');
     await page.locator('[data-test="login-button"]').click();
     
-    // Debe mostrar error genérico
-    await expect(page.locator('[data-test="error"]')).toBeVisible();
-    await expect(page.locator('[data-test="error"]')).toContainText('do not match');
+    // Verificar mensaje de error
+    const errorMsg = page.locator('[data-test="error"]');
+    await expect(errorMsg).toBeVisible();
+    await expect(errorMsg).toContainText('Username and password do not match');
   });
 
 });
-
-/**
- * USUARIOS DISPONIBLES EN SAUCEDEMO:
- * 
- * | Usuario            | Comportamiento                |
- * |--------------------|-------------------------------|
- * | standard_user      | Funciona normalmente          |
- * | locked_out_user    | Bloqueado, no puede entrar    |
- * | problem_user       | Tiene bugs visuales           |
- * | performance_user   | Responde lento                |
- * | error_user         | Genera errores aleatorios     |
- * | visual_user        | Diferencias visuales          |
- * 
- * Todos usan la misma contraseña: secret_sauce
- */

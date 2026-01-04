@@ -1,6 +1,6 @@
 // @ts-check
 
-// Nota: Esto habilita la verificación de tipos de TypeScript aunque estemos escribiendo 
+// Instrucción para VScode. Esto habilita la verificación de tipos de TypeScript aunque estemos escribiendo 
 // en JavaScript normal. Nos ayuda a que VS Code nos avise si cometemos errores
 
 import { test, expect } from '@playwright/test';

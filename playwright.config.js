@@ -36,7 +36,7 @@ export default defineConfig({
     // 'retain-on-failure' => mantiene todo el rastro del test que falló
     // 'always'           => siempre graba todo
     // 'off'              => nunca graba nada
-    screenshot: 'only-on-failure',
+    // screenshot: 'only-on-failure', //por defecto
     // para grabar aunque el test no falle
     screenshot: 'on',  // Toma captura de pantalla en CADA test
     video: 'on',       // Graba video en CADA test

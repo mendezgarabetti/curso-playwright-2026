@@ -85,9 +85,11 @@ await expect(locator).toHaveAttribute('type', 'text');
 await expect(locator).not.toBeVisible();
 ```
 
-### Estructura de un Test
+### Estructura de un Test (ES Modules)
 
 ```javascript
+import { test, expect } from '@playwright/test';
+
 test('descripción del test', async ({ page }) => {
   // 1. ARRANGE - Preparar
   await page.goto('https://www.saucedemo.com/');
@@ -101,57 +103,65 @@ test('descripción del test', async ({ page }) => {
 });
 ```
 
-## ✏️ Ejercicios
+### Agrupar Tests con describe
 
-### Ejercicio 1: Login
-- Login exitoso con standard_user
-- Verificar error con locked_out_user
+```javascript
+import { test, expect } from '@playwright/test';
 
-### Ejercicio 2: Productos
-- Verificar cantidad de productos (6)
-- Verificar título "Products"
-- Agregar producto al carrito
-- Agregar y quitar producto
+test.describe('Login', () => {
+  
+  test.beforeEach(async ({ page }) => {
+    await page.goto('https://www.saucedemo.com/');
+  });
 
-### Ejercicio 3: Carrito
-- Navegar al carrito
-- Verificar producto en carrito
+  test('login exitoso', async ({ page }) => {
+    // ...
+  });
 
-### Ejercicio 4: BONUS
-- Completar flujo de checkout completo
+  test('login fallido', async ({ page }) => {
+    // ...
+  });
 
-
-
-## 🔧 Instalación de Playwright
-
-```bash
-# Crear proyecto nuevo
-npm init playwright@latest
-
-# Opciones recomendadas:
-# - JavaScript (no TypeScript para este curso)
-# - tests/ (carpeta por defecto)
-# - Sí a GitHub Actions
-# - Sí a instalar navegadores
-
-# Verificar instalación
-npx playwright test
+});
 ```
 
-## 📖 Aplicación de práctica
+## ⚙️ Configuración ES Modules
 
-**SauceDemo**: https://www.saucedemo.com
+Este proyecto usa ES Modules (sintaxis moderna de JavaScript). Para habilitarlo, el `package.json` debe incluir:
 
-| Usuario | Comportamiento |
-|---------|----------------|
-| standard_user | Funciona normalmente |
-| locked_out_user | Bloqueado |
-| problem_user | Tiene bugs visuales |
-| performance_user | Lento |
-| error_user | Errores aleatorios |
-| visual_user | Diferencias visuales |
+```json
+{
+  "type": "module"
+}
+```
 
-**Contraseña para todos**: `secret_sauce`
+### Diferencias con CommonJS
+
+| CommonJS (antiguo) | ES Modules (moderno) |
+|-------------------|----------------------|
+| `const { test, expect } = require('@playwright/test');` | `import { test, expect } from '@playwright/test';` |
+| `module.exports = { MiClase };` | `export { MiClase };` |
+| No necesita configuración | Requiere `"type": "module"` en package.json |
+
+## ✏️ Ejercicio
+
+### Archivo: `ejercicio-primeros-pasos.spec.js`
+
+**Instrucciones:**
+1. Abrir el archivo del ejercicio
+2. Completar todos los `// TODO`
+3. Ejecutar con `npx playwright test ejercicio-primeros-pasos --project=chromium`
+4. Todos los tests deben pasar en verde
+
+**Criterios de éxito:**
+- ✅ Todos los tests pasan
+- ✅ Usaste selectores `data-test` (Nivel 1)
+- ✅ Cada test tiene al menos una aserción
+- ✅ No hay TODOs pendientes
+
+**Bonus:**
+- Completar el Ejercicio 4 (checkout completo)
+- Usar `test.beforeEach` para evitar repetición de código
 
 ## 📖 Próxima clase
 
@@ -159,4 +169,4 @@ npx playwright test
 - Auto-wait de Playwright
 - Aserciones avanzadas
 - Formularios y elementos dinámicos
-- Happy Path completo
+- Flujos completos con validaciones

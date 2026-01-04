@@ -1,5 +1,5 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
  * CLASE 1: Tests Frágiles vs Robustos
@@ -117,40 +117,76 @@ test.describe('Comparación: Frágil vs Robusto', () => {
     await page.locator('[data-test="password"]').fill('secret_sauce');
     await page.locator('[data-test="login-button"]').click();
     
-    // Siempre hay 6 productos
-    const count = await page.locator('[data-test="inventory-item"]').count();
-    expect(count).toBe(6);
+    // Siempre hay 6 productos - PREDECIBLE
+    const productos = page.locator('[data-test="inventory-item"]');
+    await expect(productos).toHaveCount(6);
     
-    // El primer producto siempre cuesta lo mismo
-    await page.locator('[data-test="product-sort-container"]').selectOption('lohi');
-    const precioMenor = await page.locator('[data-test="inventory-item-price"]').first().textContent();
-    expect(precioMenor).toBe('$7.99');
+    // El primer producto siempre es Backpack - PREDECIBLE
+    const primerNombre = page.locator('[data-test="inventory-item-name"]').first();
+    await expect(primerNombre).toHaveText('Sauce Labs Backpack');
     
-    // Ejecutá este test 100 veces: siempre pasa
+    // El precio siempre es $29.99 - PREDECIBLE
+    const primerPrecio = page.locator('[data-test="inventory-item-price"]').first();
+    await expect(primerPrecio).toHaveText('$29.99');
+  });
+
+  test('Verificar todos los productos conocidos', async ({ page }) => {
+    // Podemos verificar todos los productos porque SABEMOS cuáles son
+    await page.goto('https://www.saucedemo.com/');
+    await page.locator('[data-test="username"]').fill('standard_user');
+    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="login-button"]').click();
+    
+    // Lista completa de productos (conocida y estable)
+    const productosEsperados = [
+      'Sauce Labs Backpack',
+      'Sauce Labs Bike Light',
+      'Sauce Labs Bolt T-Shirt',
+      'Sauce Labs Fleece Jacket',
+      'Sauce Labs Onesie',
+      'Test.allTheThings() T-Shirt (Red)'
+    ];
+    
+    const nombres = page.locator('[data-test="inventory-item-name"]');
+    
+    for (let i = 0; i < productosEsperados.length; i++) {
+      await expect(nombres.nth(i)).toHaveText(productosEsperados[i]);
+    }
   });
 
 });
 
-/**
- * APLICACIONES DE PRUEBA RECOMENDADAS:
- * 
- * 🛒 E-Commerce:
- *    - SauceDemo: https://www.saucedemo.com
- *    - DemoBlaze: https://www.demoblaze.com
- *    - AutomationPractice: http://automationpractice.com
- * 
- * 📝 Formularios:
- *    - The Internet: https://the-internet.herokuapp.com
- *    - DemoQA: https://demoqa.com
- * 
- * 🔌 APIs:
- *    - JSONPlaceholder: https://jsonplaceholder.typicode.com
- *    - ReqRes: https://reqres.in
- *    - PetStore: https://petstore.swagger.io
- * 
- * Todas estas aplicaciones son:
- * ✅ Gratuitas
- * ✅ Siempre disponibles
- * ✅ Con datos predecibles
- * ✅ Diseñadas para practicar automatización
- */
+test.describe('Lecciones Aprendidas', () => {
+
+  test('✅ Siempre automatizar contra ambientes controlados', async ({ page }) => {
+    /**
+     * MEJORES PRÁCTICAS:
+     * 
+     * 1. Usar aplicaciones de prueba dedicadas:
+     *    - SauceDemo (e-commerce)
+     *    - ReqRes.in (API)
+     *    - JSONPlaceholder (API)
+     *    - The Internet (Heroku)
+     * 
+     * 2. Si es una app real, usar:
+     *    - Ambiente de QA dedicado
+     *    - Datos de prueba controlados
+     *    - Mocks cuando sea necesario
+     * 
+     * 3. Nunca automatizar contra:
+     *    - Producción con datos reales
+     *    - Sitios de terceros que no controlamos
+     *    - Contenido que cambia frecuentemente
+     */
+    
+    // Este test pasa porque SauceDemo es predecible
+    await page.goto('https://www.saucedemo.com/');
+    await page.locator('[data-test="username"]').fill('standard_user');
+    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="login-button"]').click();
+    
+    await expect(page).toHaveURL(/.*inventory.html/);
+    await expect(page.locator('[data-test="title"]')).toHaveText('Products');
+  });
+
+});

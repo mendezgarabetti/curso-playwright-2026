@@ -1,5 +1,5 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+import { test, expect } from '@playwright/test';
 
 /**
  * CLASE 1: Aserciones Básicas
@@ -154,17 +154,8 @@ test.describe('Aserciones de Cantidad', () => {
     await expect(productos).toHaveCount(6);
     
     // Verificar que hay 6 botones de agregar
-    const botonesAgregar = page.locator('button:has-text("Add to cart")');
+    const botonesAgregar = page.locator('[data-test^="add-to-cart"]');
     await expect(botonesAgregar).toHaveCount(6);
-  });
-
-  test('count() para lógica condicional', async ({ page }) => {
-    // A veces necesitamos el número para lógica
-    const cantidad = await page.locator('[data-test="inventory-item"]').count();
-    
-    // Usar expect genérico
-    expect(cantidad).toBe(6);
-    expect(cantidad).toBeGreaterThan(0);
   });
 
 });
@@ -175,40 +166,50 @@ test.describe('Aserciones de Atributos', () => {
     await page.goto('https://www.saucedemo.com/');
   });
 
-  test('toHaveAttribute - Verificar atributo', async ({ page }) => {
-    // Verificar que el input tiene type="text"
+  test('toHaveAttribute - Verificar atributos', async ({ page }) => {
+    // Verificar tipo de input
     await expect(page.locator('[data-test="username"]')).toHaveAttribute('type', 'text');
-    
-    // Verificar que el password tiene type="password"
     await expect(page.locator('[data-test="password"]')).toHaveAttribute('type', 'password');
     
-    // Verificar que el botón tiene id específico
-    await expect(page.locator('[data-test="login-button"]')).toHaveAttribute('id', 'login-button');
+    // Verificar placeholder
+    await expect(page.locator('[data-test="username"]')).toHaveAttribute('placeholder', 'Username');
   });
 
-  test('toHaveClass - Verificar clase CSS', async ({ page }) => {
-    // Verificar que el formulario tiene cierta clase
-    const loginButton = page.locator('[data-test="login-button"]');
-    await expect(loginButton).toHaveClass(/btn_action/);
+});
+
+test.describe('Aserciones con Negación', () => {
+
+  test('not - negar cualquier aserción', async ({ page }) => {
+    await page.goto('https://www.saucedemo.com/');
+    await page.locator('[data-test="username"]').fill('standard_user');
+    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="login-button"]').click();
+    
+    // Verificar que NO estamos en la página de login
+    await expect(page).not.toHaveURL('https://www.saucedemo.com/');
+    
+    // Verificar que el error NO es visible
+    await expect(page.locator('[data-test="error"]')).not.toBeVisible();
+    
+    // Verificar que el carrito NO tiene items (badge no existe)
+    await expect(page.locator('[data-test="shopping-cart-badge"]')).not.toBeVisible();
   });
 
 });
 
 test.describe('Aserciones con Timeout Personalizado', () => {
 
-  test('Timeout personalizado en expect', async ({ page }) => {
+  test('Cambiar timeout para una aserción específica', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
+    await page.locator('[data-test="username"]').fill('standard_user');
+    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="login-button"]').click();
     
-    // Por defecto, expect espera 5 segundos
-    // Podemos cambiarlo para elementos lentos:
-    await expect(page.locator('[data-test="login-button"]')).toBeVisible({
-      timeout: 10000  // 10 segundos
-    });
+    // Esperar hasta 10 segundos (en lugar de los 5 por defecto)
+    await expect(page.locator('[data-test="title"]')).toBeVisible({ timeout: 10000 });
     
-    // O para verificaciones más estrictas:
-    await expect(page.locator('[data-test="username"]')).toBeVisible({
-      timeout: 2000   // Solo 2 segundos
-    });
+    // Útil para elementos que tardan en aparecer
+    // (páginas con carga lenta, animaciones, etc.)
   });
 
 });
