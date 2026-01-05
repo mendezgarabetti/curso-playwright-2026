@@ -117,7 +117,8 @@ test.describe('Aserciones de Texto', () => {
   test('toContainText - Texto parcial', async ({ page }) => {
     // Verificar que contiene cierto texto
     const primerDescripcion = page.locator('[data-test="inventory-item-desc"]').first();
-    await expect(primerDescripcion).toContainText('carry.allทhe.things');
+    await expect(primerDescripcion).toContainText('carry.allTheThings()');
+    
     
     // También funciona para verificar que NO contiene
     await expect(primerDescripcion).not.toContainText('ERROR');
