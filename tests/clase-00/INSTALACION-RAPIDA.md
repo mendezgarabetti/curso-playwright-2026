@@ -2,175 +2,94 @@
 
 ##  Windows
 
-### Paso 1: Node.js
-```powershell
-# Opción A: Descargar instalador
-# Ir a https://nodejs.org y descargar "LTS"
+# 🎭 Curso de Automation con Playwright
 
-# Opción B: Con winget (Windows 10/11)
-winget install OpenJS.NodeJS.LTS
+¡Bienvenido al repositorio oficial del curso! Aquí encontrarás todo el material práctico, ejercicios y ejemplos que veremos clase a clase.
+
+## 🚀 Requisitos previos
+
+Antes de empezar, asegúrate de tener instalado en tu computadora (equipo con Windows 10 y al menos 6Gb de RAM):
+
+- [Node.js](https://nodejs.org/) (Versión 18 o superior recomendada)
+- [Git](https://git-scm.com/)
+- [Visual Studio Code](https://code.visualstudio.com/) (Editor recomendado)
+
+---
+
+## 🛠️ Guía de Instalación 
+
+Para evitar conflictos con el proyecto creado localmente se recomienda evitar clonar el respositorio e ir descargando los ejercicios de a uno.
+
+
+### 1. Clonar el repositorio
+Sin necesidad de contar con cuenta en GitHub. Solo deben seguir estos 4 pasos en su terminal para tener el entorno listo:
+
+Descarga el código fuente a tu computadora:
+
+```bash
+git clone https://github.com/mendezgarabetti/curso-playwright-2026.git
 ```
 
-### Paso 2: VS Code
-```powershell
-# Opción A: Descargar instalador
-Ir a https://code.visualstudio.com
+### 2. Entrar a la carpeta
 
-# Opción B: Con winget
-winget install Microsoft.VisualStudioCode
+```bash
+cd curso-playwright-2026
 ```
 
-### Paso 3: Git (opcional)
-```powershell
-winget install Git.Git
+### 3. Instalar dependencias
+
+Este paso es crucial. Creará la carpeta `node_modules` con todas las librerías necesarias.
+
+```bash
+npm install
 ```
 
-### Paso 4: Extensión Playwright
-```powershell
-code --install-extension ms-playwright.playwright
+### 4. Instalar navegadores de Playwright
+
+Descarga los binarios necesarios para correr las pruebas (Chromium, Firefox, WebKit).
+
+En Windows, abrir PowerShell y ejectuar el siguiente comando (permite ejecutar scrips locales sin firma):
+
+```bash
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### Paso 5: Verificar
-```powershell
-node --version
-npm --version
-code --version
+
+```bash
+npx playwright install
 ```
 
 ---
 
-##  macOS
+## 📂 Estructura del Proyecto
 
-### Paso 1: Homebrew (si no lo tenés)
+El código está organizado para facilitar el aprendizaje:
+
+- `/tests`: Aquí encontrarás los ejercicios divididos por carpetas (`clase01`, `clase02`, etc.)
+- `playwright.config.ts`: La configuración global del proyecto
+- `CHEATSHEET.md`: Hoja de trucos con comandos útiles
+
+---
+
+## 🏃‍♂️ Cómo ejecutar las pruebas
+
+Para correr todos los tests:
+
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+npx playwright test
 ```
 
-### Paso 2: Node.js
+Para correr solo los de una clase específica (ej: Clase 1):
+
 ```bash
-brew install node@20
+npx playwright test tests/clase01
 ```
 
-### Paso 3: VS Code
-```bash
-brew install --cask visual-studio-code
-```
+Para ver el reporte HTML al finalizar:
 
-### Paso 4: Git (opcional, puede ya estar instalado)
 ```bash
-# Verificar si ya está
-git --version
-
-# Si no está:
-brew install git
-```
-
-### Paso 5: Extensión Playwright
-```bash
-code --install-extension ms-playwright.playwright
-```
-
-### Paso 6: Verificar
-```bash
-node --version
-npm --version
-code --version
+npx playwright show-report
 ```
 
 ---
 
-##  Linux (Ubuntu/Debian)
-
-### Paso 1: Actualizar sistema
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-### Paso 2: Node.js
-```bash
-# Instalar Node.js 20.x
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-```
-
-### Paso 3: VS Code
-```bash
-# Importar clave de Microsoft
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-
-# Agregar repositorio
-sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
-
-# Instalar
-sudo apt update
-sudo apt install code
-```
-
-### Paso 4: Git
-```bash
-sudo apt install git
-```
-
-### Paso 5: Extensión Playwright
-```bash
-code --install-extension ms-playwright.playwright
-```
-
-### Paso 6: Dependencias adicionales para Playwright
-```bash
-# Playwright necesitará estas dependencias para los navegadores
-# Se instalarán automáticamente con: npx playwright install-deps
-```
-
-### Paso 7: Verificar
-```bash
-node --version
-npm --version
-code --version
-git --version
-```
-
----
-
-##  Linux (Fedora/RHEL)
-
-### Paso 1: Node.js
-```bash
-sudo dnf install nodejs
-```
-
-### Paso 2: VS Code
-```bash
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-sudo dnf install code
-```
-
-### Paso 3: Git
-```bash
-sudo dnf install git
-```
-
----
-
-## ✅ Verificación Universal
-
-Después de instalar, ejecutá en cualquier sistema:
-
-```bash
-# Crear carpeta de prueba
-mkdir test-entorno
-cd test-entorno
-
-# Probar npm
-npm init -y
-npm install @playwright/test
-
-
-# Limpiar
-cd ..
-rm -rf test-entorno
-```
-
----
