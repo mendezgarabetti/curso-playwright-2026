@@ -1,6 +1,6 @@
 # Clase 04: Arquitectura Escalable (Page Object Model)
 
-## 📋 Contenido de esta carpeta
+##  Contenido de esta carpeta
 
 ### Page Objects (`pages/`)
 | Archivo | Descripción |
@@ -25,14 +25,14 @@
 | `03-tests-con-fixtures.spec.js` | Tests con fixtures |
 | `ejercicio-refactorizacion.spec.js` | **Práctica** |
 
-## 🎯 Objetivos
+##  Objetivos
 
 1. **Entender el patrón Page Object Model**
 2. **Crear Page Objects** para encapsular selectores
 3. **Refactorizar tests** para usar POM
 4. **Usar fixtures personalizados**
 
-## 🏗️ Estructura de un Page Object
+##  Estructura de un Page Object
 
 ```javascript
 export class LoginPage {
@@ -69,7 +69,7 @@ npx playwright test ejercicio-refactorizacion --project=chromium
 npx playwright test tests/clase-04 --ui
 ```
 
-## 📚 Beneficios de POM
+##  Beneficios de POM
 
 | Sin POM | Con POM |
 |---------|---------|
@@ -78,10 +78,11 @@ npx playwright test tests/clase-04 --ui
 | Difícil de leer | Lee como lenguaje natural |
 | Cambio = muchos archivos | Cambio = un archivo |
 
-## ⚙️ Fixtures Personalizados
+##  Fixtures Personalizados
 
 ```javascript
-import { test as base } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
+import { LoginPage } from './pages/LoginPage.js';
 
 export const test = base.extend({
   loginPage: async ({ page }, use) => {
@@ -94,8 +95,10 @@ export const test = base.extend({
     await use(page);
   }
 });
+
+export { expect };
 ```
 
-## 📖 Próxima clase
+##  Próxima clase
 
 **Día 5: Pruebas Híbridas y Simulación de Red**

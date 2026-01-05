@@ -5,7 +5,7 @@ import { test, expect } from '@playwright/test';
  * ╔═══════════════════════════════════════════════════════════════════════╗
  * ║  EJERCICIO: Refactorización a Page Object Model                       ║
  * ╠═══════════════════════════════════════════════════════════════════════╣
- * ║  Tu misión: Convertir estos tests para que usen Page Objects          ║
+ * ║  Objetivo: Convertir estos tests para que usen Page Objects           ║
  * ║                                                                       ║
  * ║  Instrucciones:                                                       ║
  * ║  1. Estudiar los Page Objects en la carpeta ./pages/                  ║
@@ -15,7 +15,10 @@ import { test, expect } from '@playwright/test';
  */
 
 // TODO: Descomentar esta línea cuando empieces a refactorizar
-// import { LoginPage, InventoryPage, CartPage, CheckoutPage } from './pages/index.js';
+// import { LoginPage } from './pages/LoginPage.js';
+// import { InventoryPage } from './pages/InventoryPage.js';
+// import { CartPage } from './pages/CartPage.js';
+// import { CheckoutPage } from './pages/CheckoutPage.js';
 
 test.describe('EJERCICIO: Refactorizar estos tests', () => {
 

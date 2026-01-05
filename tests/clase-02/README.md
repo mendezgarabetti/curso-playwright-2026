@@ -14,7 +14,7 @@
 | `ejercicio-02-checkout.spec.js` | Ejercicio para completar flujo de checkout | **Práctica** |
 
 
-## 🎯 Objetivos de la clase
+##  Objetivos de la clase
 
 Al finalizar esta clase, los participantes podrán:
 
@@ -24,7 +24,7 @@ Al finalizar esta clase, los participantes podrán:
 4. **Manejar elementos dinámicos** como modales, dropdowns y contenido que carga dinámicamente
 5. **Diseñar un Happy Path** con validaciones en cada paso
 
-## 🚀 Comandos útiles
+##  Comandos útiles
 
 ```bash
 # Ejecutar todos los demos de la clase 2
@@ -40,7 +40,7 @@ npx playwright test tests/clase-02/06-happy-path --ui
 npx playwright show-report
 ```
 
-## 📚 Temas cubiertos
+##  Temas cubiertos
 
 ### Auto-Wait
 
@@ -169,7 +169,7 @@ await page.locator('input[type="file"]').setInputFiles('archivo.txt');
 - Agregar validaciones en cada paso
 - El test debe terminar con "Thank you for your order!"
 
-## ⚙️ Configuración ES Modules
+##  Configuración ES Modules
 
 Este proyecto usa ES Modules. Para habilitarlo:
 
@@ -185,12 +185,12 @@ Este proyecto usa ES Modules. Para habilitarlo:
 import { test, expect } from '@playwright/test';
 ```
 
-## 🔗 Sitios usados en los ejemplos
+##  Sitios usados en los ejemplos
 
 - **SauceDemo**: https://www.saucedemo.com (principal)
 - **The Internet**: https://the-internet.herokuapp.com (elementos dinámicos)
 
-## 📖 Próxima clase
+##  Próxima clase
 
 **Día 3: Depuración y Eficiencia**
 - Trace Viewer en profundidad

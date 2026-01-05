@@ -2,7 +2,6 @@
 
 /**
  * CLASE 4: Índice de Page Objects
- * ===============================
  * Exporta todos los Page Objects para facilitar su importación.
  * 
  * Uso:

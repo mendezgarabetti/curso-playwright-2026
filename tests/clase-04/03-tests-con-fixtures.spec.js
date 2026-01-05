@@ -3,6 +3,8 @@
 /**
  * CLASE 4: Tests con Fixtures Personalizados
  * ==========================================
+ * Usando los fixtures definidos en fixtures.js,
+ * los tests son aún más limpios.
  */
 
 import { test, expect } from './fixtures.js';

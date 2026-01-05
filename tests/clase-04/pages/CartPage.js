@@ -2,14 +2,10 @@
 
 /**
  * CLASE 4: Page Object Model (POM)
- * ================================
- * CartPage - Representa la página del carrito
+ * CartPage - Página del carrito
  */
 
 export class CartPage {
-  /**
-   * @param {import('@playwright/test').Page} page
-   */
   constructor(page) {
     this.page = page;
     
@@ -23,8 +19,6 @@ export class CartPage {
     this.continueShoppingButton = page.locator('[data-test="continue-shopping"]');
   }
 
-  // ACCIONES
-
   async removeItem(productId) {
     await this.page.locator(`[data-test="remove-${productId}"]`).click();
   }
@@ -36,8 +30,6 @@ export class CartPage {
   async continueShopping() {
     await this.continueShoppingButton.click();
   }
-
-  // GETTERS
 
   async getItemCount() {
     return await this.cartItems.count();

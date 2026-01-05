@@ -2,14 +2,10 @@
 
 /**
  * CLASE 4: Page Object Model (POM)
- * ================================
- * CheckoutPage - Representa las páginas de checkout (3 pasos)
+ * CheckoutPage - Páginas de checkout (3 pasos)
  */
 
 export class CheckoutPage {
-  /**
-   * @param {import('@playwright/test').Page} page
-   */
   constructor(page) {
     this.page = page;
     
@@ -34,8 +30,6 @@ export class CheckoutPage {
     this.completeText = page.locator('[data-test="complete-text"]');
     this.backHomeButton = page.locator('[data-test="back-to-products"]');
   }
-
-  // ACCIONES
 
   async fillInformation({ firstName, lastName, postalCode }) {
     await this.firstNameInput.fill(firstName);
@@ -66,8 +60,6 @@ export class CheckoutPage {
   async backToHome() {
     await this.backHomeButton.click();
   }
-
-  // GETTERS
 
   async getSubtotal() {
     const text = await this.subtotalLabel.textContent();

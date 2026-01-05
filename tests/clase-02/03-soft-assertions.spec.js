@@ -41,12 +41,15 @@ test.describe('Soft Assertions en Acción', () => {
     const productos = page.locator('[data-test="inventory-item-name"]');
     
     // Con soft assertions, TODAS se ejecutan aunque alguna falle
+    // NOTA: Solo 5 de 6 productos contienen "Sauce Labs" en el nombre
+    // El sexto es "Test.allTheThings() T-Shirt (Red)"
     await expect.soft(productos.nth(0)).toContainText('Sauce Labs');
     await expect.soft(productos.nth(1)).toContainText('Sauce Labs');
     await expect.soft(productos.nth(2)).toContainText('Sauce Labs');
     await expect.soft(productos.nth(3)).toContainText('Sauce Labs');
     await expect.soft(productos.nth(4)).toContainText('Sauce Labs');
-    await expect.soft(productos.nth(5)).toContainText('Sauce Labs');
+    // El producto 5 (sexto) NO contiene "Sauce Labs", verificamos que existe
+    await expect.soft(productos.nth(5)).toBeVisible();
     
     // Al final del test, Playwright reporta TODAS las que fallaron
   });
@@ -146,7 +149,9 @@ test.describe('Combinando Soft y Hard Assertions', () => {
 
 test.describe('IMPORTANTE: Limitaciones de Soft Assertions', () => {
 
-  test('Los errores se reportan al FINAL del test', async ({ page }) => {
+  // Este test demuestra cómo funcionan las soft assertions cuando fallan
+  // Lo marcamos como skip para que no falle en ejecuciones normales
+  test.skip('Los errores se reportan al FINAL del test (DEMO - falla intencional)', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
@@ -163,6 +168,19 @@ test.describe('IMPORTANTE: Limitaciones de Soft Assertions', () => {
     
     // Al terminar el test, Playwright marca como FALLIDO
     // y muestra todas las soft assertions que fallaron
+  });
+
+  test('Ejemplo funcional de soft assertions', async ({ page }) => {
+    await page.goto('https://www.saucedemo.com/');
+    await page.locator('[data-test="username"]').fill('standard_user');
+    await page.locator('[data-test="password"]').fill('secret_sauce');
+    await page.locator('[data-test="login-button"]').click();
+
+    // Verificaciones que SÍ pasan
+    await expect.soft(page.locator('[data-test="title"]')).toHaveText('Products');
+    await expect.soft(page.locator('[data-test="inventory-item"]')).toHaveCount(6);
+    
+    console.log('Todas las soft assertions pasaron');
   });
 
 });

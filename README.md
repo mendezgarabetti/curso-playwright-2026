@@ -4,7 +4,7 @@
 
 ## 🚀 Requisitos previos
 
-Antes de empezar, asegúrate de tener instalado en tu computadora:
+Antes de empezar, asegúrate de tener instalado en tu computadora (equipo con Windows 10 y al menos 6Gb de RAM):
 
 - [Node.js](https://nodejs.org/) (Versión 18 o superior recomendada)
 - [Git](https://git-scm.com/)
@@ -43,6 +43,13 @@ npm install
 ### 4. Instalar navegadores de Playwright
 
 Descarga los binarios necesarios para correr las pruebas (Chromium, Firefox, WebKit).
+
+En Windows, abrir PowerShell y ejectuar el siguiente comando (permite ejecutar scrips locales sin firma):
+
+```bash
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
 
 ```bash
 npx playwright install

@@ -1,6 +1,6 @@
 # Guías Rápidas de Instalación por Sistema Operativo
 
-## 🪟 Windows
+##  Windows
 
 ### Paso 1: Node.js
 ```powershell
@@ -14,7 +14,7 @@ winget install OpenJS.NodeJS.LTS
 ### Paso 2: VS Code
 ```powershell
 # Opción A: Descargar instalador
-# Ir a https://code.visualstudio.com
+Ir a https://code.visualstudio.com
 
 # Opción B: Con winget
 winget install Microsoft.VisualStudioCode
@@ -39,7 +39,7 @@ code --version
 
 ---
 
-## 🍎 macOS
+##  macOS
 
 ### Paso 1: Homebrew (si no lo tenés)
 ```bash
@@ -79,7 +79,7 @@ code --version
 
 ---
 
-## 🐧 Linux (Ubuntu/Debian)
+##  Linux (Ubuntu/Debian)
 
 ### Paso 1: Actualizar sistema
 ```bash
@@ -133,7 +133,7 @@ git --version
 
 ---
 
-## 🐧 Linux (Fedora/RHEL)
+##  Linux (Fedora/RHEL)
 
 ### Paso 1: Node.js
 ```bash

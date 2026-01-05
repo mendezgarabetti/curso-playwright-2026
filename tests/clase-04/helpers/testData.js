@@ -2,7 +2,6 @@
 
 /**
  * CLASE 4: Datos de Prueba
- * ========================
  * Centraliza datos usados en los tests.
  */
 
@@ -64,8 +63,6 @@ export const testCheckoutInfo = {
   postalCode: '12345'
 };
 
-// Funciones de utilidad
-
 export function calculateSubtotal(productIds) {
   return productIds.reduce((sum, id) => {
     const product = Object.values(products).find(p => p.id === id);
@@ -78,5 +75,5 @@ export function calculateTax(subtotal, taxRate = 0.08) {
 }
 
 export function formatPrice(amount) {
-  return `$${amount.toFixed(2)}`;
+  return '$' + amount.toFixed(2);
 }

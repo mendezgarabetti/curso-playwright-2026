@@ -2,14 +2,10 @@
 
 /**
  * CLASE 4: Page Object Model (POM)
- * ================================
- * LoginPage - Representa la página de login de SauceDemo
+ * LoginPage - Página de login de SauceDemo
  */
 
 export class LoginPage {
-  /**
-   * @param {import('@playwright/test').Page} page
-   */
   constructor(page) {
     this.page = page;
     
@@ -21,8 +17,6 @@ export class LoginPage {
     this.errorCloseButton = page.locator('[data-test="error-button"]');
     this.logo = page.locator('.login_logo');
   }
-
-  // ACCIONES
 
   async goto() {
     await this.page.goto('https://www.saucedemo.com/');
@@ -49,8 +43,6 @@ export class LoginPage {
   async closeError() {
     await this.errorCloseButton.click();
   }
-
-  // GETTERS
 
   async getErrorText() {
     return await this.errorMessage.textContent();

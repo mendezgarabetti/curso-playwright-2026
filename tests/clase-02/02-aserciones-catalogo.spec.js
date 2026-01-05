@@ -130,14 +130,19 @@ test.describe('Aserciones de Atributos y Clases', () => {
     // Verificar el atributo data-test
     await expect(page.locator('[data-test="title"]')).toHaveAttribute('data-test', 'title');
     
-    // Verificar la clase del contenedor
-    const inventario = page.locator('#inventory_container');
-    await expect(inventario).toHaveAttribute('class', /inventory_container/);
+    // Verificar que el botón de menú tiene el atributo correcto
+    const menuButton = page.locator('#react-burger-menu-btn');
+    await expect(menuButton).toHaveAttribute('type', 'button');
   });
 
   test('toHaveClass - verificar clase CSS', async ({ page }) => {
-    const inventario = page.locator('#inventory_container');
-    await expect(inventario).toHaveClass(/inventory_container/);
+    // Verificar que el título tiene la clase correcta
+    const titulo = page.locator('[data-test="title"]');
+    await expect(titulo).toHaveClass(/title/);
+    
+    // Verificar clase del contenedor de productos
+    const lista = page.locator('.inventory_list');
+    await expect(lista).toHaveClass(/inventory_list/);
   });
 
   test('toHaveCount - cantidad de elementos', async ({ page }) => {
@@ -149,8 +154,8 @@ test.describe('Aserciones de Atributos y Clases', () => {
   test('toHaveCSS - verificar estilos CSS', async ({ page }) => {
     // Verificar el tamaño de fuente del título
     const titulo = page.locator('[data-test="title"]');
-    // Nota: los colores se devuelven en formato rgb()
-    await expect(titulo).toHaveCSS('font-size', '24px');
+    // El título tiene font-size de 18px en SauceDemo
+    await expect(titulo).toHaveCSS('font-size', '18px');
   });
 
 });

@@ -2,14 +2,10 @@
 
 /**
  * CLASE 4: Page Object Model (POM)
- * ================================
- * InventoryPage - Representa la página de productos
+ * InventoryPage - Página de productos
  */
 
 export class InventoryPage {
-  /**
-   * @param {import('@playwright/test').Page} page
-   */
   constructor(page) {
     this.page = page;
     
@@ -23,8 +19,6 @@ export class InventoryPage {
     this.cartBadge = page.locator('[data-test="shopping-cart-badge"]');
     this.menuButton = page.locator('#react-burger-menu-btn');
   }
-
-  // ACCIONES
 
   async addToCart(productId) {
     await this.page.locator(`[data-test="add-to-cart-${productId}"]`).click();
@@ -51,8 +45,6 @@ export class InventoryPage {
   async clickProduct(productId) {
     await this.page.locator(`[data-test="item-${productId}-title-link"]`).click();
   }
-
-  // GETTERS
 
   async getProductCount() {
     return await this.products.count();
