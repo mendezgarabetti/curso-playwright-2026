@@ -83,24 +83,25 @@ test.describe('Modificar Responses', () => {
 
   test('Interceptar y modificar response', async ({ page }) => {
     await page.route('https://jsonplaceholder.typicode.com/users/1', async (route) => {
-      const response = await route.fetch();
+      const response = await route.fetch({
+        headers: { 'accept-encoding': 'identity' }
+      });
+
       const json = await response.json();
-      
+
       json.name = 'Usuario Modificado';
       json.email = 'modificado@test.com';
-      
-      await route.fulfill({
-        response,
-        body: JSON.stringify(json)
-      });
+
+      await route.fulfill({ json });
+
     });
-    
+
     // Probar con evaluate
     const result = await page.evaluate(async () => {
       const res = await fetch('https://jsonplaceholder.typicode.com/users/1');
       return res.json();
     });
-    
+
     // El mock solo aplica si navegamos a una página que lo use
   });
 
