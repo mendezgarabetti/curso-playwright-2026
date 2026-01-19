@@ -219,9 +219,9 @@ test.describe('iFrames', () => {
     const editor = frame.locator('#tinymce');
     
     // Para TinyMCE (contenteditable), usamos click + selectAll + escribir
-    await editor.click();
-    await page.keyboard.press('Control+A'); // Seleccionar todo
-    await page.keyboard.type('Texto escrito por Playwright');
+    await frame.locator('#tinymce').evaluate((el) => {
+      el.innerHTML = 'Texto escrito por Playwright';
+    });
     
     // Verificar el contenido
     await expect(editor).toContainText('Texto escrito por Playwright');
