@@ -8,7 +8,7 @@ Este documento detalla todo lo que necesitás tener instalado y configurado **AN
 
 ## 📋 Checklist Rápido
 
-Antes del Día 1, verificá que tenés:
+Verificá que tenés:
 
 - [ ] **Node.js** versión 18 o superior
 - [ ] **Visual Studio Code** instalado
