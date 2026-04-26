@@ -1,9 +1,7 @@
 // @ts-check
-import { test as base, expect } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage.js';
-import { InventoryPage } from './pages/InventoryPage.js';
-import { CartPage } from './pages/CartPage.js';
-import { CheckoutPage } from './pages/CheckoutPage.js';
+export { expect } from '@playwright/test';
+import { LoginPage, InventoryPage, CartPage, CheckoutPage } from './pages/index.js';
+import { test as base } from '@playwright/test';
 
 /**
  * CLASE 4: Fixtures Personalizados
@@ -23,6 +21,7 @@ import { CheckoutPage } from './pages/CheckoutPage.js';
 
 export const test = base.extend({
   
+  // @ts-ignore
   loginPage: async ({ page }, use) => {
     const loginPage = new LoginPage(page);
     await use(loginPage);
@@ -78,5 +77,3 @@ export const test = base.extend({
     await use(page);
   }
 });
-
-export { expect };

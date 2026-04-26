@@ -22,6 +22,7 @@ export class LoginPage {
     await this.page.goto('https://www.saucedemo.com/');
   }
 
+  // Se realiza el login recibiendo por parámetro el usuario y contraseña
   async login(username, password) {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);

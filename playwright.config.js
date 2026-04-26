@@ -1,5 +1,11 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
+import { loadEnv } from './envLoader.js'; // Importación de loadEnv() para realizar la carga de información del entorno en el que se ejecuta.
+
+// Carga de información de enviroment/ambiente.
+loadEnv();
+
+const reportFolder = `playwright-report/playwright-report-${Date.now()}`;
 
 /**
  * Read environment variables from file.
@@ -23,15 +29,18 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html', { outputFolder: reportFolder }]
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: process.env.BASE_URL,
+    headless: false,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     //trace: 'on-first-retry',
-    trace: 'retain-on-failure',  // Captura de evidencia: 
+    trace: 'on',  // Captura de evidencia: 
     // 'on-first-retry'  => solo si el test falla y va a reintentar
     // 'retain-on-failure' => mantiene todo el rastro del test que falló
     // 'always'           => siempre graba todo
@@ -44,6 +53,17 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    /*
+    {
+      name: 'setup',
+      testMatch: /login\.setup\.js/,
+    },
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'], // 👈 CLAVE
+    },
+    */
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
@@ -87,4 +107,3 @@ export default defineConfig({
   //   reuseExistingServer: !process.env.CI,
   // },
 });
-

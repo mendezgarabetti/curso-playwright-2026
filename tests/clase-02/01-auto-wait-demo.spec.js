@@ -106,7 +106,7 @@ test.describe('ANTI-PATRÓN: Evitar sleeps fijos', () => {
     // Esto es frágil: si la página es más lenta, falla
     // Si es más rápida, perdemos tiempo
     // await page.waitForTimeout(3000); // NO HACER ESTO
-    
+
     // ✅ CORRECTO: Esperar por una condición real
     await expect(page.locator('.login_logo')).toBeVisible();
     

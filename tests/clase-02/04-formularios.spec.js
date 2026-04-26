@@ -17,9 +17,9 @@ test.describe('Inputs de Texto', () => {
     // Es más rápido y es el método recomendado
     await page.locator('[data-test="username"]').fill('standard_user');
     
-    // type(): Escribe caracter por caracter (simula tipeo humano)
+    // pressSequentially(): Escribe caracter por caracter (simula tipeo humano)
     // Útil si necesitas probar eventos de teclado intermedios
-    // await page.locator('[data-test="password"]').type('secret_sauce', { delay: 100 });
+    // await page.locator('[data-test="password"]').pressSequentially('secret_sauce', { delay: 100 });
     
     // En la mayoría de casos, usa fill()
     await page.locator('[data-test="password"]').fill('secret_sauce');

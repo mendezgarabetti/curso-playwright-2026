@@ -13,14 +13,32 @@ import { test, expect } from '@playwright/test';
 test.describe('Ejercicio 1: GET Requests', () => {
 
   test('1.1 Obtener un post específico', async ({ request }) => {
-    // TODO: Hacer GET a /posts/1
-    // TODO: Verificar status 200
-    // TODO: Verificar que el body tiene id, title, body, userId
+    const response = await request.get('https://jsonplaceholder.typicode.com/posts/1');
+
+    expect(response.status()).toBe(200);
+    expect(response.ok()).toBeTruthy();
+
+    const body = await response.json();
+    expect(body.userId).toBe(1);
+    expect(body.id).toBe(1);
+    expect(body.title).toEqual('sunt aut facere repellat provident occaecati excepturi optio reprehenderit');
   });
 
   test('1.2 Obtener posts de un usuario', async ({ request }) => {
-    // TODO: Hacer GET a /posts con param userId=1
-    // TODO: Verificar que todos los posts tienen userId=1
+    const response = await request.get('https://jsonplaceholder.typicode.com/posts', {
+      params: {
+        userId: 1
+      }
+    });
+
+    expect(response.status()).toBe(200);
+    expect(response.ok()).toBeTruthy();
+
+    const posts = await response.json();
+    //OPCION 1 -- Para cada recurso, validar que el campo userId = 1 --
+    posts.forEach(post => {
+      expect(post.userId).toBe(1);
+    });
   });
 
   test('1.3 Obtener comentarios de un post', async ({ request }) => {

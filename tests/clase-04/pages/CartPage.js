@@ -10,6 +10,8 @@ export class CartPage {
     this.page = page;
     
     // LOCATORS
+    //Selectores de Login
+    //Selectores de Pagina principal
     this.title = page.locator('[data-test="title"]');
     this.cartItems = page.locator('[data-test="inventory-item"]');
     this.itemNames = page.locator('[data-test="inventory-item-name"]');

@@ -1,5 +1,5 @@
 // @ts-check
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 /**
  * ╔═══════════════════════════════════════════════════════════════════════╗
@@ -15,43 +15,46 @@ import { test, expect } from '@playwright/test';
  */
 
 // TODO: Descomentar esta línea cuando empieces a refactorizar
-// import { LoginPage } from './pages/LoginPage.js';
+//import { LoginPage } from './pages/LoginPage.js';
 // import { InventoryPage } from './pages/InventoryPage.js';
 // import { CartPage } from './pages/CartPage.js';
 // import { CheckoutPage } from './pages/CheckoutPage.js';
+// PUEDE USARSE INDEX.JS
+
+import { LoginPage, InventoryPage } from './pages/index.js';
 
 test.describe('EJERCICIO: Refactorizar estos tests', () => {
 
-  test('Test 1: Login y verificar productos - REFACTORIZAR', async ({ page }) => {
-    // CÓDIGO ACTUAL (sin POM)
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
+  test('Test 1: Login y verificar productos - REFACTORIZAR', async ({ loginPage }) => {
+    const elementoLogin = loginPage.obtenerSelectorLogin();
+    loginAccionPage.iniciarLogin(elementoLogin());
     
-    await expect(page).toHaveURL(/.*inventory.html/);
-    
-    const productos = page.locator('[data-test="inventory-item"]');
-    await expect(productos).toHaveCount(6);
+    await loginPage.goto();
+    await loginPage.loginAsStandardUser();
 
-    // TODO: Reescribir usando LoginPage e InventoryPage
+    await expect(loginPage.page).toHaveURL(/.*inventory.html/);
+    
+    const inventoryPage = new InventoryPage(loginPage.page);
+    const cantidadProductos = await inventoryPage.getProductCount();
+    expect(cantidadProductos).toBe(6);
   });
 
   test('Test 2: Agregar múltiples productos - REFACTORIZAR', async ({ page }) => {
-    // Login
-    await page.goto('https://www.saucedemo.com/');
-    await page.locator('[data-test="username"]').fill('standard_user');
-    await page.locator('[data-test="password"]').fill('secret_sauce');
-    await page.locator('[data-test="login-button"]').click();
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.loginAsStandardUser();
     
-    // Agregar productos
-    await page.locator('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-    await page.locator('[data-test="add-to-cart-sauce-labs-bike-light"]').click();
-    await page.locator('[data-test="add-to-cart-sauce-labs-bolt-t-shirt"]').click();
-    
-    await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('3');
+    await expect(page).toHaveURL(/.*inventory.html/);
 
-    // TODO: Usar inventoryPage.addMultipleToCart([...])
+    const inventoryPage = new InventoryPage(page);
+    await inventoryPage.addMultipleToCart([
+      'sauce-labs-backpack',
+      'sauce-labs-bike-light',
+      'sauce-labs-bolt-t-shirt'
+    ]);
+
+    const cantidadProductosCarrito = await inventoryPage.getCartCount();
+    expect(cantidadProductosCarrito).toBe(3);
   });
 
   test('Test 3: Ordenar por precio - REFACTORIZAR', async ({ page }) => {

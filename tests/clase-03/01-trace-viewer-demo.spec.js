@@ -35,7 +35,7 @@ test.describe('Trace Viewer: Capturando Evidencia', () => {
     await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('1');
   });
 
-  test.skip('Test que FALLA intencionalmente (para ver trace)', async ({ page }) => {
+  test('Test que FALLA intencionalmente (para ver trace)', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');

@@ -18,8 +18,8 @@ import { test, expect } from '@playwright/test';
  * 🔲 Elementos
  *    - toBeVisible()
  *    - toBeEnabled() / toBeDisabled()
- *    - toHaveText()
- *    - toContainText()
+ *    - toHaveText() --> "carrito de compra" carrito FALLA
+ *    - toContainText() --> "carrito de compra" carrito PASA
  *    - toHaveValue()
  *    - toHaveAttribute()
  *    - toHaveCount()

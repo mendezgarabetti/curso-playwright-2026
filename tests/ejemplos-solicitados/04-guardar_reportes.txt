@@ -1,0 +1,15 @@
+• playwright.config.js
+
+// Tiempo obtenido para indicar fecha y hora de reporte generado
+const timestamp = new Date()
+  .toISOString()
+  .replace(/[:.]/g, '-');
+
+export default defineConfig({
+  reporter: [
+    ['html', { outputFolder: `playwright-report/${env}-${timestamp}` }]
+  ],})
+
+Se obtiene un reporte de ejecución 
+- con el prefijo del entorno (dev o test) 
+- seguido de la fecha y hora de ejecución.  

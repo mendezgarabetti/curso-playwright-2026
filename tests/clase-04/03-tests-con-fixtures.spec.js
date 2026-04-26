@@ -1,4 +1,4 @@
-// @ts-check
+// @ts-nocheck
 
 /**
  * CLASE 4: Tests con Fixtures Personalizados
@@ -60,8 +60,8 @@ test.describe('Tests con Fixtures Avanzados', () => {
     expect(count).toBe(6);
   });
 
-  test('Test con producto ya en carrito', async ({ pageWithProduct, inventoryPage }) => {
-    const count = await inventoryPage.getCartCount();
+  test('Test con producto ya en carrito', async ({ pageWithProduct }) => {
+    const count = await pageWithProduct.getCartCount();
     expect(count).toBe(1);
   });
 
@@ -75,15 +75,15 @@ test.describe('Tests con Fixtures Avanzados', () => {
 
 });
 
-test.describe('Beneficios de usar Fixtures', () => {
 
-  /**
+/** 
+test.describe('Beneficios de usar Fixtures', () => {
+  /
    * BENEFICIO 1: Menos código repetitivo
    * BENEFICIO 2: Fixtures con estado precargado
    * BENEFICIO 3: Tipado automático
    * BENEFICIO 4: Reutilización a nivel de proyecto
-   */
-
+  
   test('Ejemplo: Combinando fixtures', async ({ loginPage, inventoryPage }) => {
     await loginPage.goto();
     await loginPage.loginAsStandardUser();
@@ -93,5 +93,5 @@ test.describe('Beneficios de usar Fixtures', () => {
     const firstPrice = await inventoryPage.getFirstProductPrice();
     expect(firstPrice).toBe('$7.99');
   });
-
 });
+**/

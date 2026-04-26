@@ -2,73 +2,97 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * CLASE 5: Mocking Avanzado - Casos de Uso Reales
+ * CLASE 5: Mocking Avanzado - Conduit (UI + API)
  * ===============================================
  */
 
+const BASE_URL = 'https://conduit.bondaracademy.com';
+
 test.describe('Caso 1: Simular Estados de Error', () => {
 
-  test('Simular error 500', async ({ page }) => {
-    await page.route('**/api/**', async (route) => {
+  test('Simular error 500 en carga de artículos', async ({ page }) => {
+
+    await page.route('**/api/articles*', async (route) => {
       await route.fulfill({
         status: 500,
         contentType: 'application/json',
         body: JSON.stringify({
-          error: 'Internal Server Error',
-          message: 'El servidor no está disponible'
+          error: 'Internal Server Error'
         })
       });
     });
-    
-    await page.goto('https://www.saucedemo.com/');
-    await expect(page.locator('[data-test="login-button"]')).toBeVisible();
+
+    await page.goto(BASE_URL);
+
+    await expect(page.locator('app-article-list')).toBeVisible();
   });
 
-  test('Simular error de autenticación (401)', async ({ page }) => {
-    await page.route('**/api/protected/**', async (route) => {
+  test('Simular error 401 (no autenticado)', async ({ page }) => {
+
+    await page.route('**/api/user', async (route) => {
       await route.fulfill({
         status: 401,
         contentType: 'application/json',
         body: JSON.stringify({
-          error: 'Unauthorized',
-          message: 'Su sesión ha expirado'
+          error: 'Unauthorized'
         })
       });
     });
+
+    await page.goto(BASE_URL);
+
+    await expect(page.locator('text=Sign in')).toBeVisible();
   });
 
 });
 
 test.describe('Caso 2: Simular Datos Específicos', () => {
 
-  test('Carrito vacío', async ({ page }) => {
-    await page.route('**/api/cart', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ items: [], total: 0 })
-      });
-    });
-  });
+  test('Lista de artículos vacía', async ({ page }) => {
 
-  test('Carrito con muchos productos', async ({ page }) => {
-    const manyItems = Array.from({ length: 50 }, (_, i) => ({
-      id: i + 1,
-      name: `Producto ${i + 1}`,
-      quantity: Math.floor(Math.random() * 5) + 1,
-      price: parseFloat((Math.random() * 100).toFixed(2))
-    }));
-    
-    await page.route('**/api/cart', async (route) => {
+    await page.route('**/api/articles*', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          items: manyItems,
-          total: manyItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+          articles: [],
+          articlesCount: 0
         })
       });
     });
+
+    await page.goto(BASE_URL);
+
+    await expect(page.locator('text=No articles are here... yet.')).toBeVisible();
+  });
+
+  test('Lista con datos mockeados', async ({ page }) => {
+
+    await page.route('**/api/articles*', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          articles: [
+            {
+              title: '🚀 Artículo Mockeado',
+              description: 'Este contenido no viene del backend',
+              body: 'Mock completo',
+              tagList: [],
+              createdAt: new Date().toISOString(),
+              author: {
+                username: 'mock-user'
+              }
+            }
+          ],
+          articlesCount: 1
+        })
+      });
+    });
+
+    await page.goto(BASE_URL);
+
+    await expect(page.locator('text=🚀 Artículo Mockeado')).toBeVisible();
   });
 
 });
@@ -76,47 +100,61 @@ test.describe('Caso 2: Simular Datos Específicos', () => {
 test.describe('Caso 3: Simular Comportamientos de Red', () => {
 
   test('Conexión lenta', async ({ page }) => {
-    await page.route('**/*', async (route) => {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+    await page.route('**/api/articles*', async (route) => {
+      await new Promise(resolve => setTimeout(resolve, 2000));
       await route.continue();
     });
-    
-    await page.goto('https://www.saucedemo.com/');
-    await expect(page.locator('[data-test="login-button"]')).toBeVisible();
+
+    await page.goto(BASE_URL);
+
+    await expect(page.locator('app-article-list')).toBeVisible();
   });
 
-  test('Respuestas condicionales', async ({ page }) => {
+  test('Respuestas condicionales (fallo y recuperación)', async ({ page }) => {
+
     let requestCount = 0;
-    
-    await page.route('**/api/data', async (route) => {
+
+    await page.route('**/api/articles*', async (route) => {
       requestCount++;
-      
+
       if (requestCount === 1) {
-        await route.fulfill({ status: 200, body: '{"status": "ok"}' });
-      } else if (requestCount === 2) {
         await route.fulfill({ status: 500 });
       } else {
-        await route.fulfill({ status: 200, body: '{"status": "recovered"}' });
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            articles: [],
+            articlesCount: 0
+          })
+        });
       }
     });
+
+    await page.goto(BASE_URL);
   });
 
 });
 
-test.describe('Caso 4: Feature Flags', () => {
+test.describe('Caso 4: Modificar Respuesta Real', () => {
 
-  test('Simular feature flag activada', async ({ page }) => {
-    await page.route('**/api/feature-flags', async (route) => {
+  test('Modificar datos reales de la API', async ({ page }) => {
+
+    await page.route('**/api/articles*', async (route) => {
+      const response = await route.fetch();
+      const json = await response.json();
+
+      json.articles[0].title = '🔥 MODIFICADO DESDE PLAYWRIGHT';
+
       await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          newCheckout: true,
-          darkMode: true,
-          betaFeatures: true
-        })
+        response,
+        body: JSON.stringify(json)
       });
     });
-  });
 
+    await page.goto(BASE_URL);
+
+    await expect(page.locator('text=🔥 MODIFICADO DESDE PLAYWRIGHT')).toBeVisible();
+  });
 });

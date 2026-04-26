@@ -17,7 +17,7 @@ test.describe('API Testing: Métodos HTTP', () => {
     
     const body = await response.json();
     expect(body.id).toBe(1);
-    expect(body.title).toBeDefined();
+    expect(body.title).toEqual('sunt aut facere repellat provident occaecati excepturi optio reprehenderit');
   });
 
   test('GET - Obtener lista de recursos', async ({ request }) => {
@@ -43,7 +43,7 @@ test.describe('API Testing: Métodos HTTP', () => {
     
     const body = await response.json();
     expect(body.title).toBe('Test Post');
-    expect(body.id).toBeDefined();
+    expect(body.id).toBe(1);
   });
 
   test('PUT - Actualizar recurso', async ({ request }) => {

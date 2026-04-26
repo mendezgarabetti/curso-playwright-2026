@@ -1,0 +1,11 @@
+El sitio web en el cual investigar sobre el uso de librerias es el siguiente:
+
+https://www.npmjs.com/
+
+Alli podran encontrar ejemplos como el de librerias para conexión a base de datos
+
+• https://www.npmjs.com/package/pg --> Conexión postgreSQL
+• https://www.npmjs.com/package/mysql --> Conexión MySQL
+• https://www.npmjs.com/package/mongodb --> Conexión MongoDB
+• https://www.npmjs.com/package/oracledb --> Conexión a base de datos de oracledb
+

@@ -1,0 +1,64 @@
+Si queremos hacer CI/CD utilizando GitHub Actions, la forma es por medio de archivos .yml
+Estos deben ir en la carpeta .github
+Dentro de esta carpeta creamos un archivo .yml por cada workflow correspondiente
+
+Dentro del archivo .yml correspondiente, indicaremos:
+
+• name  --> Nombre del WorkFlow
+• on    --> Sobre qué ramas va a ejecutarse la regresión y en qué situación (push, pull request, etc)
+• jobs  --> Indicaremos cada job que se ejecutara en el workflow
+• timeout-minutes   --> Tiempo límite antes de indicar como fallida la ejecución
+• runs-on           --> Sobre qué maquina se levantara. En el ejemplo es sobre Linux
+• steps --> Pasos a realizar
+    ◘ actions/checkout@v4   --> Clona el repositorio a la maquina
+    ◘ actions/setup-node@v4 --> Instala Node.js
+    ◘ npm ci                --> Instala dependencias indicadas en package.json
+    ◘ npx playwright install --with-deps    --> Instala navegadores que usa Playwright
+    ◘ npx playwright test   --> Ejecución de tests, puede modificarse el comando para
+                                ejecutar según parámetros deseados
+    ◘ actions/upload-artifact@v4            --> Guarda archivos generados
+    ◘ playwright-report     --> Guarda reporte HTML, durante 30 dias.
+
+¿Si quiero agregar más jobs? Lo hago de la siguiente manera:
+
+jobs:
+  api-tests:
+    ...
+
+  ui-tests:
+    ...
+
+Para indicar dependencias entre jobs (que solo se ejecute uno si otro pasó previamente):
+
+ui-tests:
+  needs: api-tests
+
+
+¿Si quiero definir valor de variable de entorno? Lo hago asi:
+
+jobs:
+  test:
+    env:
+      ENV: dev
+
+o
+
+- name: Run tests
+  run: npx playwright test
+  env:
+    ENV: test
+
+
+¿Si quiero más de un workflow?
+
+.github/
+  workflows/
+    playwright.yml
+    api-tests.yml
+    nightly-tests.yml
+
+¿Si quiero que se ejecute en un horario determinado?
+
+on:
+  schedule:
+    - cron: '0 3 * * *'

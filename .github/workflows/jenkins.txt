@@ -1,0 +1,9 @@
+¿Cómo utilizo Jenkins para ejecutar los tests en mi repositorio?
+
+Debo realizar la configuración correspondiente sea en mi maquina local
+o un servidor en donde este instalado Jenkins.
+Lo que vamos a hacer desde el repositorio, es crear un archivo llamado Jenkinsfile.
+Este se va a encontrar en la raiz del proyecto.
+
+En esta misma carpeta podemos hallar el ejemplo de cómo debe estar definido el archivo,
+tiene el nombre de jenkinsfile.txt (en un ejemplo real no iria la extensión .txt).

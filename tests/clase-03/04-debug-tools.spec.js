@@ -13,12 +13,12 @@ test.describe('page.pause() - Pausa Interactiva', () => {
     await page.goto('https://www.saucedemo.com/');
     
     // Descomentar para pausar aquí:
-    // await page.pause();
+    await page.pause();
     
     await page.locator('[data-test="username"]').fill('standard_user');
     await page.locator('[data-test="password"]').fill('secret_sauce');
     
-    // await page.pause(); // Otra pausa para ver el formulario lleno
+    await page.pause(); // Otra pausa para ver el formulario lleno
     
     await page.locator('[data-test="login-button"]').click();
     
