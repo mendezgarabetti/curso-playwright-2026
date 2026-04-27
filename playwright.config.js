@@ -53,31 +53,33 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    /*
     {
       name: 'setup',
-      testMatch: /login\.setup\.js/,
+      testMatch: /health\.setup\.js/,
     },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'], // 👈 CLAVE
     },
-    */
+    /*
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
     },
-
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+    {
+      name: 'Microsoft_Edge',
+      use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    },
+    */
 
     /* Test against mobile viewports. */
     // {

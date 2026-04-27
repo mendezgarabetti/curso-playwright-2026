@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 test('Verificar que el entorno responde', async ({ page }) => {
-  await page.goto('/');
+  console.log('URL guardada en config', process.env.BASE_URL);
+  await page.goto('https://orion.sefin.gob.hn/teso/teso-ben-prb-app/');
 
   console.log('🌐 URL actual:', page.url());
-  console.log('🌎 Entorno:', process.env.ENV_NAME);
 
   // Validación simple
-  await expect(page).toHaveURL(/http/);
+  await expect(page).toHaveURL(/.*orion.sefin.gob.hn.*/);
   // Validación que rompe el setup
   //await expect(page).toHaveURL(/algo-incorrecto/);
 
